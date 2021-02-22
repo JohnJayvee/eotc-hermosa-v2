@@ -11,7 +11,7 @@ class BusinessRequest extends RequestManager{
             $file = $this->file('file') ? count($this->file('file')) : 0;
             
 		$rules = [
-                  "business_id_no" => "required|unique:business,business_id_no",
+                  //"business_id_no" => "required|unique:business,business_id_no",
                   "business_scope" => "required",
                   "business_type" => "required",
                   "dominant_name" => "required",
@@ -62,7 +62,7 @@ class BusinessRequest extends RequestManager{
                   // "sss_no" => "integer",
                   // "philhealth_no" => "integer",
                   // "pagibig_no" => "integer",
-                  "valid_business" => 'bnn',
+                  //"valid_business" => 'bnn',
 
 		];
 

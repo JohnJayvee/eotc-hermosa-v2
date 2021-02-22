@@ -86,7 +86,7 @@
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Business Type <span class="text-danger">*</span></label>
-                                        {!!Form::select("business_type", $business_types, old('business_type' , (!empty($business_type_f) ? $business_type_f : null)), ['id' => "input_business_type", !empty($business_type_f) ? 'disabled' : '','class' => "form-control form-control-sm classic".($errors->first('business_type') ? 'border-red' : NULL)])!!}
+                                        {!!Form::select("business_type", $business_types, old('business_type' , (!empty($business_type_f) ? $business_type_f : null)), ['id' => "input_business_type", !empty($business_type_f) ? 'disabled' : '','class' => "form-control form-control-sm classic ".($errors->first('business_type') ? 'border-red' : NULL)])!!}
                                         @if($errors->first('business_type'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('business_type')}}</small>
                                         @endif
@@ -975,8 +975,8 @@
         $(this).get_city("{{old('region')}}", "#input_town", "#input_brgy", "{{old('town')}}");
         @endif
 
-        @if(strlen(old('town')) > 0)
-        $(this).get_brgy("{{old('town')}}", "#input_brgy", "{{old('brgy')}}");
+        @if(strlen(old('brgy')) > 0)
+        $(this).get_brgy("{{old('town','030805000')}}", "#input_brgy", "{{old('brgy')}}");
         @endif
 
         $("#input_brgy").on("change", function () {
@@ -1030,8 +1030,8 @@
         $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
         @endif
 
-        @if(strlen(old('lessor_town')) > 0)
-        $(this).get_brgy("{{old('lessor_town')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
+        @if(strlen(old('lessor_brgy')) > 0)
+        $(this).get_brgy("{{old('lessor_town','030805000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
         @endif
 
         $("#input_lessor_brgy").on("change", function () {
@@ -1041,5 +1041,8 @@
         });
 
     })
+
+   
+
 </script>
 @endsection
