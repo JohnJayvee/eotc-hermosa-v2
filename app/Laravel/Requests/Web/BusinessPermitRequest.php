@@ -11,16 +11,20 @@ class BusinessPermitRequest extends RequestManager{
 		
 
 		$rules = [
-            'line_of_business.*' => 'required',
+            //'line_of_business.*' => 'required',
             // 'no_of_units' => 'required',
             //'no_of_units.*' => 'nullable',
-            'amount.*' => 'required|numeric',
+            //'amount.*' => 'required|numeric',
             'photo_establishment' => 'required|mimes:png,jpg,jpeg,pdf',
             'bir_itr_form' => 'required|mimes:png,jpg,jpeg,pdf',
             'agree' => 'accepted',
 
         ];  
-      
+            foreach(range(1,count($this->get('line_of_business'))) as $index => $value){
+                  $rules["line_of_business.{$index}"] = "required";
+                  $rules["amount.{$index}"] = "required";
+
+            }
 		return $rules;
 
 	}

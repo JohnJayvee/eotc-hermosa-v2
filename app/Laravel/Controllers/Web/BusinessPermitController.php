@@ -36,6 +36,7 @@ class BusinessPermitController extends Controller{
         if (Auth::guard('customer')->user()) {
 			$this->data['auth'] = Auth::guard('customer')->user();
             $this->data['business_profiles'] = Business::where('customer_id',$this->data['auth']->id)->get();
+            
             $business = Business::find(session()->get('selected_business_id'));
             $this->data['business'] = $business;
             $this->data['business_line'] = BusinessLine::where('business_id', session()->get('selected_business_id'))->get();
@@ -85,9 +86,8 @@ class BusinessPermitController extends Controller{
             $new_business_transaction->document_reference_code = 'EOTC-DOC-' . Helper::date_format(Carbon::now(), 'ym') . str_pad($new_business_transaction->id, 5, "0", STR_PAD_LEFT) . Str::upper(Str::random(3));
             $new_business_transaction->save();
 
-            $list_of_line_of_business_save_to_local = array();
+            //$list_of_line_of_business_save_to_local = array();
             foreach ($request->line_of_business as $key => $v) {
-                $account_code = explode("---", $request->account_code [$key]);
                 /**
                  * 0 = line of business name
                  * 1 = reference code
@@ -99,20 +99,14 @@ class BusinessPermitController extends Controller{
                  */
                 $data = [
                     'application_business_permit_id' => $new_business_permit->id,
-                    'line_of_business' => $new_business_permit->type == "renew" && !$request->is_new [$key] ? $account_code[0] : $request->line_of_business [$key],
+                    'line_of_business' => $request->line_of_business [$key],
                     'no_of_unit' => $request->no_of_units [$key],
-                    'capitalization' => $new_business_permit->type == "new" ? $request->amount [$key] : ($request->is_new [$key] ? $request->amount [$key] : 0),
-                    'gross_sales' => $new_business_permit->type == "renew" && !$request->is_new [$key] ? $request->amount [$key] : 0,
-                    'reference_code' => $account_code [1],
-                    'b_class' => $account_code [2],
-                    's_class' => $account_code [3],
-                    'x_class' => $account_code [4],
-                    'account_code' => $account_code [5],
-                    'particulars' => $account_code [6]
+                    'capitalization' => $request->amount [$key],
+                    //'gross_sales' => $new_business_permit->type == "renew" && !$request->is_new [$key] ? $request->amount [$key] : 0,
                 ];
                 BusinessActivity::insert($data);
-                $data = array_merge($data, array("particulars"=>$account_code [6]));
-                array_push($list_of_line_of_business_save_to_local, $data);
+                //$data = array_merge($data, array("particulars"=>$account_code [6]));
+                //array_push($list_of_line_of_business_save_to_local, $data);
             }
 
             $permit_id = $new_business_transaction->id;
@@ -161,14 +155,15 @@ class BusinessPermitController extends Controller{
                 'name' => $auth->name
             ];
 
-            $request_body = [
-                'business_id' => $business->business_id_no,
-                'ebriu_application_no' =>  $new_business_permit->application_no,
-                'year' => Carbon::now()->year,
-                'line_of_business' => $list_of_line_of_business_save_to_local
-            ];
+            //$request_body = [
+                //'business_id' => $business->business_id_no,
+                //'ebriu_application_no' =>  $new_business_permit->application_no,
+                //'year' => Carbon::now()->year,
+                //'line_of_business' => $list_of_line_of_business_save_to_local
+            //];
 
             $bplo = User::where('type', 'admin')->first();
+
             $insert_department[] = [
                 'email' => $bplo->email,
                 'contact_number' => $bplo->contact_number,
@@ -176,8 +171,8 @@ class BusinessPermitController extends Controller{
                 'application_no' => $request->application_no,
             ];
             
-            $line_of_business_data = new UploadLineOfBusinessToLocal($request_body);
-            Event::dispatch('upload-line-of-business-to-local', $line_of_business_data);
+            //$line_of_business_data = new UploadLineOfBusinessToLocal($request_body);
+            //Event::dispatch('upload-line-of-business-to-local', $line_of_business_data);
 
             $notification_data = new SendBusinessPermitConfirmation($insert);
             Event::dispatch('send-business-permit-assessment-confirmation', $notification_data);

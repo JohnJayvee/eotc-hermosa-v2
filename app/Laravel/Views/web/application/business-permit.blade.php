@@ -599,28 +599,28 @@
                                                 <th class="text-title text-uppercase renew" style="display: none;">Renew (Gross Sales / Capital) <span class="text-danger">*</span></th>
                                                 <th class="text-title text-uppercase">Action</th>
                                             </thead>
-                                            <tbody id="businessline_tbody">
-                                                @foreach ($business_line as $key => $item)
-                                                <tr id="repeat_form" class="activity">
+                                            <tbody id="repeat_form">
+                                               @foreach(range(1, old('line_of_business') ? count(old('line_of_business')) : 1 ) as $index => $value)
+                                                <tr class="activity">
                                                     <td>
-                                                        <input type="text" readonly class="form-control form-control-sm {{ $errors->has('line_of_business.*') ? 'is-invalid': NULL  }}" name="line_of_business[]" value="{{old('line_of_business[]', $item->name.($item->particulars ? " (".$item->particulars.")" : "")) }}">
-                                                        <input type="hidden" readonly class="form-control form-control-sm {{ $errors->has('account_code.*') ? 'is-invalid': NULL  }}" name="account_code[]" value="{{old('class[]', $item->name."---".$item->reference_code."---".$item->b_class."---".$item->s_class."---".($item->x_class ? $item->x_class : 0))."---".$item->account_code."---".$item->particulars }}">
-                                                        <input type="hidden" class="form-control form-control-sm" name="is_new[]" value="0">
+                                                        <input type="text" class="form-control form-control-sm {{ $errors->has("line_of_business.{$index}") ? 'is-invalid': NULL  }}" name="line_of_business[]" value="{{old("line_of_business.{$index}")}}">
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control form-control-sm {{ $errors->has('no_of_units.*') ? 'is-invalid': NULL  }}" name="no_of_units[]" value="{{ old('no_of_units[]') }}" placeholder="{{ $errors->first('no_of_units.*') }}">
+                                                        <input type="text" class="form-control form-control-sm {{ $errors->has("no_of_units.{$index}") ? 'is-invalid': NULL  }}" name="no_of_units[]" value="{{ old("no_of_units.{$index}") }}" placeholder="{{ $errors->first("no_of_units.{$index}") }}">
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control form-control-sm {{ $errors->has('amount.*') ? 'is-invalid': NULL  }}" name="amount[]" value="{{ old('amount[]', $item->gross_sales) }}" placeholder="{{ $errors->first('amount.*') }}">
+                                                        <input type="text" class="form-control form-control-sm {{ $errors->has("amount.{$index}") ? 'is-invalid': NULL  }}" name="amount[]" value="{{ old("amount.{$index}") }}" placeholder="{{ $errors->first("amount.{$index}") }}">
                                                     </td>
+                                                    @if($index > 0)
                                                     <td>
-                                                        {{-- <button type="button" class="btn btn-danger bt-primary btn-remove">Remove</button> --}}
+                                                        <button type="button" class="btn btn-danger bt-primary btn-remove">Remove</button>
                                                     </td>
+                                                    @endif
                                                 </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                        {{-- <button class="btn btn-light btn-sm" id="repeater_add_activity" type="button"><i class="fa fa-plus mr-2"></i>Add Line of Business</button> --}}
+                                        <button class="btn btn-light btn-sm" id="repeater_add_activity" type="button"><i class="fa fa-plus mr-2"></i>Add Line of Business</button>
                                     </div>
                                 </div>
                             </div>
@@ -776,7 +776,7 @@
     $('.session-forget').click(function (){
         {{ session()->forget('successmodal') }}
     })
-     $.fn.get_region = function(input_region,input_province,input_city,input_brgy,selected){
+    $.fn.get_region = function(input_region,input_province,input_city,input_brgy,selected){
 
       $(input_city).empty().prop('disabled',true)
       $(input_brgy).empty().prop('disabled',true)
@@ -871,7 +871,8 @@
         line_of_businesses = data.data;
       });
     }
-     $(function(){
+
+    $(function(){
         $(this).get_line_of_business();
         $('.modal').modal('show');
         $(this).get_region("#input_region","#input_province","#input_town","#input_brgy","{{old('region')}}")
@@ -907,37 +908,18 @@
         });
         $('.type_of_application').val('{{ session('application.transaction_type') }}');
 
-        $('#repeater_add_activity').on('click', function(){
-            var list_of_lob = '<option>Select Line of Business</option>';
-            $.each(line_of_businesses,function(index,value){
-                var code = value.Class+"---"+value.RefCode+'---'+value.BClass+"---"+value.SClass+"---"+(value.XClass ? value.XClass:"0")+"---"+value.AcctCode+"---"+value.Particulars;
-                list_of_lob += `<option value="${code}">${value.Class}</option>`;
+        $("#repeat_form").delegate(".btn-remove","click",function(){
+            var parent_div = $(this).parents(".activity");
+            parent_div.fadeOut(500,function(){
+              $(this).remove();
             })
-            var repeat_item = `<tr id="repeat_form" class="activity">
-                                    <td>
-                                        <select class="select-line-of-business form-control form-control-sm classic {{ $errors->has('account_code.*') ? 'is-invalid': NULL  }}" name="account_code[]" value="{{ old('account_code[]') }}" placeholder="{{ $errors->first('account_code.*') }}">
-                                            ${list_of_lob}
-                                        </select>
-                                        <input type="text" class="form-control form-control-sm mt-3" name="line_of_business[]" placeholder="Enter Particular">
-                                        <input type="hidden" class="form-control form-control-sm" name="is_new[]" value="1">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control form-control-sm {{ $errors->has('no_of_units.*') ? 'is-invalid': NULL  }}" name="no_of_units[]" value="0" placeholder="{{ $errors->first('no_of_units.*') }}">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control form-control-sm {{ $errors->has('amount.*') ? 'is-invalid': NULL  }}" name="amount[]" value="{{ old('amount[]') }}" placeholder="{{ $errors->first('amount.*') }}">
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger bt-primary btn-remove">Remove</button>
-                                    </td>
-                                </tr>`;
-            $("#businessline_tbody").append(repeat_item);
-            $('.select-line-of-business').select2();
         });
 
-        $("#businessline_tbody").delegate(".btn-remove","click",function(){
-            var parent_div = $(this).parents(".activity");
-            parent_div.remove();
+        $('#repeater_add_activity').on('click', function(){
+            var repeat_item = $("#repeat_form tr").eq(0).prop('outerHTML');
+            var main_holder = $(this).parents("tr").parent();
+
+        $("#repeat_form").append(repeat_item).find("tr:last").append('<td> <button type="button" class="btn btn-danger bt-primary btn-remove">Remove</button> </td>')
         });
 
         $('#agree').click(function () {
