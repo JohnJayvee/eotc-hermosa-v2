@@ -11,7 +11,7 @@
     <br>
     <p>This is to inform you that your account is now ACTIVE. You may now login using the email and password you provided on the Sign Up Application.</p>
     <br>
-    <p>Please prepare your Business ID or BID located at the lower portion of your existing business permit.</p>
+    <!-- <p>Please prepare your Business ID or BID located at the lower portion of your existing business permit.</p> -->
     <br>
     <p>For more information or concerns, please contact the BPLO hotline:</p>
     <br>

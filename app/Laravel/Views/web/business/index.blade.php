@@ -20,7 +20,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="text-title text-uppercase">Please Select A Business Profile You Want To Display</h5>
-                        <p class="text-danger"><b>ATTENTION:</b> One (1) Business ID can be used to one (1) Business CV. Multiple use of Business ID is not allowed.</p>
+                        {{-- <p class="text-danger"><b>ATTENTION:</b> One (1) Business ID can be used to one (1) Business CV. Multiple use of Business ID is not allowed.</p> --}}
                     </div>
                 </div>
             </div>

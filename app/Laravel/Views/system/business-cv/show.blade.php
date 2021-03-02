@@ -38,10 +38,10 @@
             <h5 class="text-title text-uppercase mt-3">Business Information
             </h5>
             <div class="row underline mb-2">
-                <div class="col-md-4">
+                {{-- <div class="col-md-4">
                     <label class="text-uppercase">{{$profile->business_id_no}}</label>
                     <p>Business ID</p>
-                </div>
+                </div> --}}
                 <div class="col-md-4">
                     <label class="text-uppercase">{{$profile->dti_sec_cda_registration_no}}</label>
                     <p>DTI/SEC/CDA registration No</p>

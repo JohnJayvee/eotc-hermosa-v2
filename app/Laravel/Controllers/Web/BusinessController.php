@@ -462,7 +462,7 @@ class BusinessController extends Controller
 
             DB::commit();
             session()->flash('notification-status',"success");
-            session()->flash('notification-msg',"The Business CV was successfully deleted. Don't worry, you can still re-use your Business ID (BID) to create a new Business CV.");
+            session()->flash('notification-msg',"The Business CV was successfully deleted.");
             return redirect()->route('web.business.index');
         }catch(\Throwable $e){
             DB::rollback();

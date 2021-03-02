@@ -23,12 +23,12 @@
                                         <input type="hidden" name="application_no" value="{{ session('application_no') }}">
                                     </div>
                                 </div> -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Business ID. No.</label>
                                         <p class="form-data text-success text-uppercase">{{ $business->business_id_no }}</p>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row">
                                 <div class="col-md-6">

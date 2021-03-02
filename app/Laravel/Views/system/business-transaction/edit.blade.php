@@ -37,7 +37,7 @@
           <div class="col-md-6">
             <p class="text-title fw-500" style="font-size: 1.2rem;">Application Number: <span class="text-black">{{str::title($transaction->application_permit->application_no)}}</span></p>
             <p class="text-title fw-500">Business Name: <span class="text-black">{{str::title($transaction->business_name)}}</span></p>
-            <p class="text-title fw-500">Business ID Number: <span class="text-black">{{str::title($transaction->business_info->business_id_no)}}</span></p>
+            {{-- <p class="text-title fw-500">Business ID Number: <span class="text-black">{{str::title($transaction->business_info->business_id_no)}}</span></p> --}}
             <p class="text-title fw-500">Dominant Name: <span class="text-black">{{str::title($transaction->business_info->dominant_name)}}</span></p>
             <p class="text-title fw-500">Business Number: <span class="text-black">{{$transaction->business_info->dti_sec_cda_registration_no ?: "-"}}</span></p>
             <p class="text-title fw-500">Business Type: <span class="text-black">{{str::title($transaction->business_info->business_type)}}</span></p>
@@ -139,11 +139,11 @@
                           <input type="text" class="form-control {{ $errors->first('transaction.business_name') ? 'is-invalid': NULL  }}"  name="transaction[business_name]" value="{{old('transaction.business_name', str::title($transaction->business_name) ?? '') }}">
                           @include('system.business-transaction.error', ['error_field' => 'transaction.business_name'])
                       </div>
-                      <div class="form-group my-0">
+                      {{-- <div class="form-group my-0">
                           <label for="exampleInputEmail1" class="text-form">Business ID No <span class="text-danger">*</span></label>
                           <input type="text" class="form-control {{ $errors->first('business_info.business_id_no') ? 'is-invalid': NULL  }}"  name="business_info[business_id_no]" value="{{old('business_info.business_id_no', str::title($transaction->business_info->business_id_no) ?? '') }}">
                           @include('system.business-transaction.error', ['error_field' =>  'business_info.business_id_no'])
-                      </div>
+                      </div> --}}
                       <div class="form-group my-0">
                           <label for="exampleInputEmail1" class="text-form">Dominant Name <span class="text-danger">*</span></label>
                           <input type="text" class="form-control {{ $errors->first('business_info.dominant_name') ? 'is-invalid': NULL  }}"  name="business_info[dominant_name]" value="{{old('business_info.dominant_name', str::title($transaction->business_info->dominant_name) ?? '') }}">
@@ -326,7 +326,7 @@
                                   {{-- <td>
                                     {!!Form::select("editables[business_line][]", $line_of_businesses, old('editables.business_line[]', $item->b_class."---".$item->s_class."---".($item->x_class ? $item->x_class:"0")."---".$item->account_code), ['id' => "input_business_scope".$key_level, 'class' => "form-control classic".($errors->first('editables.business_line.*') ? 'border-red' : NULL)])!!}
                                   </td> --}}
-                                  <td>
+                                  {{-- <td>
                                     <select id="input_business_scope{{ $key_level }}" class="form-control classic{{ ($errors->first('editables.business_line.*') ? 'border-red' : NULL) }}" name="editables[business_line][]" >
                                         @foreach ($line_of_businesses as $key_set => $item_line)
                                             <option value="{{ $key_set }}" @if (array_key_exists($key_set, $existing))
@@ -336,6 +336,10 @@
                                             @endif> {{ $item_line }}</option>
                                         @endforeach
                                     </select>
+                                  </td> --}}
+                                  <td width="200">
+                                    <input type="text" class="form-control form-control-sm {{ $errors->first('editables.business_line.*') ? 'is-invalid': NULL  }}"  name="editables[business_line][]" value="{{old('editables.business_line[]' , $item->line_of_business) }}" autocomplete="none">
+                                    @include('system.business-transaction.error', ['error_field' => 'editables.particulars.*'])
                                   </td>
                                   <td width="200">
                                     <input type="text" class="form-control form-control-sm {{ $errors->first('editables.particulars.*') ? 'is-invalid': NULL  }}"  name="editables[particulars][]" value="{{old('editables.particulars[]' , $item->particulars) }}" autocomplete="none">

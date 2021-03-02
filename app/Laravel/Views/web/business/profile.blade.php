@@ -45,10 +45,10 @@
                                 <label class="text-uppercase">{{$profile->dti_sec_cda_registration_no}}</label>
                                 <p>DTI/SEC/CDA registration No</p>
                             </div>
-                            <div class="col-md-2">
+                            <!-- <div class="col-md-2">
                                 <label class="text-uppercase">{{$profile->business_id_no}}</label>
                                 <p>Business ID</p>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="row underline mb-2">
                             <div class="col-md-4 mb-2">
@@ -420,7 +420,7 @@
                     title = 'Oops, sorry!';
                     break;
                 case "APPROVED":
-                    message = 'You still have an active and approved business permit application. You can\'t apply multiple applications in one (1) Business ID. ';
+                    message = 'You still have an active and approved business permit application. ';
                     title = 'Oops, sorry!';
                     break;
                 default:

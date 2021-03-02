@@ -186,6 +186,7 @@ class BusinessPermitController extends Controller{
             // send via Email
             $notification_data = new NotifyBPLOAdminEmail($insert_department);
             Event::dispatch('notify-bplo-admin-email', $notification_data);
+            
             session()->put('successmodal', 1);
             session()->forget('application_id');
             session()->forget('application_name');

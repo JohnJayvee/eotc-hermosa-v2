@@ -20,7 +20,7 @@
           @include('system._components.notifications')
           {!!csrf_field()!!}
           <div class="form-group">
-            <label for="input_title">Business ID</label>
+            {{-- <label for="input_title">Business ID</label> --}}
             <input type="text" class="form-control {{$errors->first('business_id') ? 'is-invalid' : NULL}}" id="input_business_id" name="business_id" value="{{old('business_id',$transaction->business_info->business_id_no)}}" readonly>
             @if($errors->first('business_id'))
             <p class="mt-1 text-danger">{!!$errors->first('business_id')!!}</p>

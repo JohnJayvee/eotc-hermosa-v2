@@ -82,11 +82,11 @@
 					<td>{{ $d1->format('F j, ').Carbon::now()->year }}</td>
 					<td>No. of Female Employee : {{$business->no_of_female_employee}}</td>
 				</tr>
-				<tr>
+				{{-- <tr>
 					<td>Business ID No.</td>
 					<td >{{$business->business_id_no}}</td>
 					<td class=""></td>
-				</tr>
+				</tr> --}}
 				<tr>
 					<td>Type</td>
 					<td>{{$business->permit->type == "renew" ? "Renewal" : "New"}}</td>
