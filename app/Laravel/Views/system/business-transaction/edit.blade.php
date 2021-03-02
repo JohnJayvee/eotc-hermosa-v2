@@ -28,7 +28,9 @@
           <div class="col-md-2 d-flex align-items-end flex-column">
             <p class="pull-right badge badge-danger">Checked the I Agree Checkbox</p>
             <!-- <a href="{{ route('system.business_transaction.digital_cerficate', ['id' => $transaction->id]) }}" class="badge badge-info" target="_blank">Release Digital Certificate</a> -->
-            <a class="badge badge-info btn-certificate">Release Digital Certificate</a>
+            @if($transaction->digital_certificate_released == "0" and $transaction->payment_status == "PAID" and $transaction->status == "APPROVED")
+              <a class="badge badge-info btn-certificate" href="#" >Release Digital Certificate</a>
+            @endif
           </div>
         </div>
       </div>
