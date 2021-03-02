@@ -334,33 +334,32 @@ class BusinessTransactionController extends Controller
                         foreach ($lob_array as $key_business => $editable_lob) {
                             if(in_array($editable_lob, request('editables.old_line'))){
                                 $line_key = array_search($editable_lob, request('editables.old_line'));
-                                $lob_code =$this->data['line_of_businesses_coded'][request('editables.business_line')[$line_key]];
-
+                                $lob_code = request('editables.business_line')[$line_key];
                                 $line = BusinessActivity::where('id', $key_business)->first();
                                 $line->gross_sales = request('editables.amount')[$line_key];
                                 $line->no_of_unit = request('editables.no_of_units')[$line_key];
                                 $line->particulars = strtoupper(request('editables.particulars')[$line_key]);
 
-                                $line->line_of_business = $lob_code['Class'];
-                                $line->b_class =  $lob_code['BClass'];
-                                $line->s_class =  $lob_code['SClass'];
-                                $line->x_class =  $lob_code['XClass'] ?? 0 ;
-                                $line->account_code =  $lob_code['AcctCode'];
-                                $line->reference_code =  $lob_code['RefCode'];
+                                //$line->line_of_business = $lob_code['Class'];
+                                //$line->b_class =  $lob_code['BClass'];
+                                //$line->s_class =  $lob_code['SClass'];
+                                //$line->x_class =  $lob_code['XClass'] ?? 0 ;
+                                //$line->account_code =  $lob_code['AcctCode'];
+                                //$line->reference_code =  $lob_code['RefCode'];
                                 $line->save();
 
 
                                 $data = [
                                     'application_business_permit_id' => $transaction->application_permit->id,
-                                    'line_of_business' => $lob_code['Class'],
+                                    'line_of_business' => request('editables.business_line')[$line_key],
                                     'no_of_unit' =>  request('editables.no_of_units')[$line_key],
-                                    'capitalization' => $line->capitalization ?? 0 ,
+                                    //'capitalization' => $line->capitalization ?? 0 ,
                                     'gross_sales' => request('editables.amount')[$line_key],
-                                    'reference_code' => $lob_code ['RefCode'],
-                                    'b_class' => $lob_code ['BClass'],
-                                    's_class' => $lob_code ['SClass'],
-                                    'x_class' => $lob_code ['XClass'] ?? 0 ,
-                                    'account_code' => $lob_code ['AcctCode'] ,
+                                    //'reference_code' => $lob_code ['RefCode'],
+                                    //'b_class' => $lob_code ['BClass'],
+                                    //'s_class' => $lob_code ['SClass'],
+                                    //'x_class' => $lob_code ['XClass'] ?? 0 ,
+                                    //'account_code' => $lob_code ['AcctCode'] ,
                                     'particulars' => strtoupper(request('editables.particulars')[$line_key])
                                 ];
 
@@ -385,7 +384,7 @@ class BusinessTransactionController extends Controller
 
             if(request('business_line')){
                 foreach (request('business_line') as $key_business => $lob_request) {
-                    $lob_code = $this->data['line_of_businesses_coded'][$lob_request];
+                    //$lob_code = $this->data['line_of_businesses_coded'][$lob_request];
                     /**
                      * 0 = line of business name
                      * 1 = reference code
@@ -397,15 +396,15 @@ class BusinessTransactionController extends Controller
                      */
                     $data = [
                         'application_business_permit_id' => $transaction->application_permit->id,
-                        'line_of_business' => $transaction->application_permit->type == "renew" && !$request->is_new [$key_business] ? $lob_code['Class'] : $request->line_of_business [$key_business],
+                        'line_of_business' => $request->business_line [$key_business],
                         'no_of_unit' => $request->no_of_units [$key_business],
                         'capitalization' => $transaction->application_permit->type == "new" ? $request->amount [$key_business] : ($request->is_new [$key_business] ? $request->amount [$key_business] : 0),
                         'gross_sales' => $transaction->application_permit->type == "renew" && !$request->is_new [$key_business] ? $request->amount [$key_business] : 0,
-                        'reference_code' => $lob_code ['RefCode'],
-                        'b_class' => $lob_code ['BClass'],
-                        's_class' => $lob_code ['SClass'],
-                        'x_class' => $lob_code ['XClass'] ?? 0 ,
-                        'account_code' => $lob_code ['AcctCode'] ,
+                        //'reference_code' => $lob_code ['RefCode'],
+                        //'b_class' => $lob_code ['BClass'],
+                        //'s_class' => $lob_code ['SClass'],
+                        //'x_class' => $lob_code ['XClass'] ?? 0 ,
+                        //'account_code' => $lob_code ['AcctCode'] ,
                         'particulars' => strtoupper($request->particulars [$key_business]) ?? ''
                     ];
                     BusinessActivity::insert($data);
@@ -460,8 +459,7 @@ class BusinessTransactionController extends Controller
         }
     }
 
-    public function update_status($id = null)
-    {
+    public function update_status($id = null){
         $business_transaction = BusinessTransaction::find($id);
         $business_transaction->isNew = null;
         $business_transaction->save();
@@ -1282,7 +1280,6 @@ class BusinessTransactionController extends Controller
 			session()->flash('notification-status', "success");
 			session()->flash('notification-msg', "successfully update transactions");
 			return redirect()->route('system.business_transaction.pending');
-
 
     }
 }

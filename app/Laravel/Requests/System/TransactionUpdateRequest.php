@@ -8,7 +8,7 @@ class TransactionUpdateRequest extends RequestManager{
 	public function rules(){
 		$rules = [
 			'transaction.business_name' => "required",
-			'business_info.business_id_no' => "required",
+			//'business_info.business_id_no' => "required",
 			'business_info.tradename' => "required",
 			'business_info.dti_sec_cda_registration_no' => "required",
 			'business_info.dominant_name' => "required",

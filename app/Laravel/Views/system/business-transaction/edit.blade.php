@@ -854,7 +854,8 @@
 <script src="{{asset('system/vendors/select2/select2.min.js')}}" type="text/javascript"></script>
 <script id="hidden-template" type="text/x-custom-template">
     <td>
-        {!!Form::select("business_line[]", $line_of_businesses, old('business_line[]'), ['id' => "input_business_scope", 'class' => "form-control classic ".($errors->first('business_line.*') ? 'border-red' : NULL)])!!}
+        <input type="text" class="form-control form-control-sm {{ $errors->first('business_line.*') ? 'is-invalid': NULL  }}"  name="business_line[]" value="{{old('business_line[]') }}">
+        @include('system.business-transaction.error', ['error_field' => 'business_line.*'])
     </td>
     <td>
         <input type="text" class="form-control form-control-sm {{ $errors->first('particulars.*') ? 'is-invalid': NULL  }}"  name="particulars[]" value="{{old('particulars[]') }}">
