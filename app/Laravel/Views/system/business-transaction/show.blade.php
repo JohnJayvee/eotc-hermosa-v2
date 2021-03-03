@@ -249,7 +249,6 @@
           </div>
         </div>
       </div>
-    @if($assessment)
     <div class="card card-rounded shadow-sm mb-4">
       <div class="card-body">
         <div class="row">
@@ -259,16 +258,17 @@
           <div class="col-md-6">
             <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
           </div>
+         @if($assessment)
           <div class="col-md-6">
             <p class="text-title fw-500">Assessment File: <span class="text-black"><a href="{{$assessment->directory}}/{{$assessment->filename}}" target="_blank">{{$assessment->original_name}}</a></p>
             <p class="text-title fw-500">Cedula: <span class="text-black">{{Helper::money_format($assessment->cedula)}}</span></p>
             <p class="text-title fw-500">Barangay Fee: <span class="text-black">{{Helper::money_format($assessment->brgy_fee)}}</span></p>
             <p class="text-title fw-500">Total Amount: <span class="text-black">{{Helper::money_format($assessment->total_amount)}}</span></p>
           </div>
+        @endif
         </div>
       </div>
     </div>
-    @endif
     <div class="card card-rounded shadow-sm mb-2">
       <div class="card-body">
         <div class="row">
