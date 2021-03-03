@@ -249,6 +249,7 @@
           </div>
         </div>
       </div>
+    @if($assessment)
     <div class="card card-rounded shadow-sm mb-4">
       <div class="card-body">
         <div class="row">
@@ -266,7 +267,8 @@
           </div>
         </div>
       </div>
-    </div> 
+    </div>
+    @endif
     <div class="card card-rounded shadow-sm mb-2">
       <div class="card-body">
         <div class="row">
