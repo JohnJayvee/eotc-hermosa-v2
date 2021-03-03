@@ -19,13 +19,7 @@
         <form class="create-form" method="POST" enctype="multipart/form-data">
           @include('system._components.notifications')
           {!!csrf_field()!!}
-          <div class="form-group">
-            {{-- <label for="input_title">Business ID</label> --}}
-            <input type="text" class="form-control {{$errors->first('business_id') ? 'is-invalid' : NULL}}" id="input_business_id" name="business_id" value="{{old('business_id',$transaction->business_info->business_id_no)}}" readonly>
-            @if($errors->first('business_id'))
-            <p class="mt-1 text-danger">{!!$errors->first('business_id')!!}</p>
-            @endif
-          </div>
+          
           <div class="form-group">
             <label for="input_title">E-BRIU Application No.</label>
             <input type="text" class="form-control {{$errors->first('application_no') ? 'is-invalid' : NULL}}" id="input_title" name="application_no" value="{{old('application_no',strtoupper($transaction->application_permit->application_no))}}" readonly>
@@ -34,12 +28,34 @@
             @endif
           </div>
           <div class="form-group">
-            <label for="input_title">Office Code</label>
-          <input type="text" class="form-control {{$errors->first('office_code') ? 'is-invalid' : NULL}}" id="input_title" name="office_code" value="{{old('office_code',Auth::user()->department->code)}}" readonly>
-            @if($errors->first('office_code'))
-            <p class="mt-1 text-danger">{!!$errors->first('office_code')!!}</p>
+            <label for="input_title">File</label>
+            <input type="file" class="form-control {{$errors->first('file') ? 'is-invalid' : NULL}}" id="input_title" name="file" value="{{old('file',strtoupper($transaction->application_permit->file))}}">
+            @if($errors->first('file'))
+            <p class="mt-1 text-danger">{!!$errors->first('file')!!}</p>
             @endif
           </div>
+          <div class="form-group">
+            <label for="input_title">Cedula</label>
+            <input type="text" class="form-control {{$errors->first('cedula') ? 'is-invalid' : NULL}}" id="input_title" name="cedula" value="{{old('cedula',strtoupper($transaction->application_permit->cedula))}}">
+            @if($errors->first('cedula'))
+            <p class="mt-1 text-danger">{!!$errors->first('cedula')!!}</p>
+            @endif
+          </div>
+          <div class="form-group">
+            <label for="input_title">Barangay Fee</label>
+            <input type="text" class="form-control {{$errors->first('brgy_fee') ? 'is-invalid' : NULL}}" id="input_title" name="brgy_fee" value="{{old('brgy_fee',strtoupper($transaction->application_permit->brgy_fee))}}">
+            @if($errors->first('brgy_fee'))
+            <p class="mt-1 text-danger">{!!$errors->first('brgy_fee')!!}</p>
+            @endif
+          </div>
+          <div class="form-group">
+            <label for="input_title">Total Assessment</label>
+            <input type="text" class="form-control {{$errors->first('total_amount') ? 'is-invalid' : NULL}}" id="input_title" name="total_amount" value="{{old('total_amount',strtoupper($transaction->application_permit->total_amount))}}">
+            @if($errors->first('total_amount'))
+            <p class="mt-1 text-danger">{!!$errors->first('total_amount')!!}</p>
+            @endif
+          </div>
+          
           <button type="submit" class="btn btn-primary mr-2">Proceed</button>
           <a href="{{route('system.business_transaction.show',[$transaction->id])}}" class="btn btn-light">Return </a>
         </form>
@@ -48,7 +64,7 @@
   </div>
   
 </div>
-<div class="row">
+{{-- <div class="row">
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
@@ -96,7 +112,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 @stop
 
 @section('page-styles')

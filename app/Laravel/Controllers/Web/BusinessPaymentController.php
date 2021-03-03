@@ -8,7 +8,7 @@ namespace App\Laravel\Controllers\Web;
 use App\Laravel\Requests\PageRequest;
 use App\Laravel\Requests\Web\UploadRequest;
 use App\Laravel\Requests\Web\BusinessRequest;
-use App\Laravel\Models\{BusinessTransaction,Business,BusinessLine,BusinessFee,RegulatoryPayment,BusinessTaxPayment};
+use App\Laravel\Models\{BusinessTransaction,Business,BusinessLine,BusinessFee,RegulatoryPayment,BusinessTaxPayment,Assessment};
 use App\Laravel\Requests\Web\EditBusinessRequest;
 /*
  * Models
@@ -48,7 +48,7 @@ class BusinessPaymentController extends Controller
 			return redirect()->back();
 		}
 		
-        $this->data['business_fee'] = BusinessFee::where('transaction_id', $this->data['transaction']->id)->where('fee_type' , $this->data['payment_type'])->where('payment_status' ,"PENDING")->get();
+        $this->data['assessment'] = Assessment::where('transaction_id', $this->data['transaction']->id)->first();
         
         return view('web.business.payment',$this->data);
     }

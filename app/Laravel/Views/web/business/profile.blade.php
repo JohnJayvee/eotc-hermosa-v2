@@ -25,11 +25,7 @@
                             <div class="col-md-8 d-flex flex-row">
                                 <a data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}" class="custom-btn-danger btn-delete btn-danger text-white ml-auto mr-2" >Delete Business CV</a>
                                 <a href="{{route('web.business.history',[$profile->id])}}" class="custom-btn badge-primary-2 text-white mr-2" >Application History</a>
-                                @if($business_transaction)
-                                    @if($business_transaction->status == "APPROVED" )
-                                        <a href="{{route('web.business_payment.index',[$profile->id])}}" class="mr-2 custom-btn badge-primary-2 text-white">Business Payment</a>
-                                    @endif
-                                @endif
+                                <a href="{{route('web.business_payment.index',[$profile->id])}}" class="mr-2 custom-btn badge-primary-2 text-white">Business Payment</a>
                             </div>
                         </div>
                         <div class="row underline mb-2">

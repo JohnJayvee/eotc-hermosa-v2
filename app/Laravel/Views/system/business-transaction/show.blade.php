@@ -249,145 +249,24 @@
           </div>
         </div>
       </div>
-    {{-- <div class="card card-rounded shadow-sm mb-4">
+    <div class="card card-rounded shadow-sm mb-4">
       <div class="card-body">
         <div class="row">
           <div class="col-md-6 pt-2">
             <h5 class="text-title text-uppercase">Assessment Details</h5>
           </div>
           <div class="col-md-6">
-            @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
-              <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
-              @endif
-            @endif
+            <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
           </div>
-
-          <div class="table-responsive pt-2">
-            <p class="text-title text-bold">Regulatory Fee <!-- <span class="badge  badge-{{Helper::status_badge(Helper::check_regulatory($transaction->id))}} p-2">{{Helper::check_regulatory($transaction->id)}}</span> --></p>
-            <table class="table table-bordered table-wrap" style="table-layout: fixed;">
-              <thead>
-                <tr class="text-center">
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Department Name</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Total Amount</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Fee Type</th>
-
-                  <th class="text-title p-3" colspan="3">Breakdown</th>
-                </tr>
-                <tr class="text-center">
-                  <th class="text-title p-3">Office Code</th>
-                  <th class="text-title p-3">Account Name</th>
-                  <th class="text-title p-3">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($regulatory_fee as $fee)
-                  <tr class="text-center">
-
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{$fee->department->name}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">PHP {{Helper::money_format($fee->amount)}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{ Helper::fee_type($fee->fee_type)}} </td>
-                  </tr>
-                  @foreach(json_decode($fee->collection_of_fees) as $collection)
-                    <tr >
-                      <td style="font-size: 12px;" class="p-2">{{$collection->OfficeCode}}</td>
-                      <td style="font-size: 12px;" class="p-2">{{$collection->BusinessID}}</td>
-                      <td style="font-size: 12px;" class="p-2">PHP {{Helper::money_format($collection->Amount)}}</td>
-                    </tr>
-                  @endforeach
-                @empty
-                  <tr>
-                    <td colspan="5" class="text-center"> No Assessment Records Available </td>
-                  </tr>
-                @endforelse
-
-              </tbody>
-            </table>
-          </div>
-          <div class="table-responsive pt-3">
-            <p class="text-title text-bold">Business Tax Fee</p>
-            <table class="table table-bordered table-wrap" style="table-layout: fixed;">
-              <thead>
-                <tr class="text-center">
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Department Name</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Total Amount</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Fee Type</th>
-
-                  <th class="text-title p-3" colspan="3">Breakdown</th>
-                </tr>
-                <tr class="text-center">
-                  <th class="text-title p-3">Office Code</th>
-                  <th class="text-title p-3">Account Name</th>
-                  <th class="text-title p-3">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($business_tax as $fee)
-                  <tr class="text-center">
-
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{$fee->department->name}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">PHP {{Helper::money_format($fee->amount)}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{ Helper::fee_type($fee->fee_type)}} </td>
-                  </tr>
-                  @foreach(json_decode($fee->collection_of_fees) as $collection)
-                    <tr >
-                      <td style="font-size: 12px;" class="p-2">{{$collection->OfficeCode}}</td>
-                      <td style="font-size: 12px;" class="p-2">{{$collection->BusinessID}}</td>
-                      <td style="font-size: 12px;" class="p-2">PHP {{Helper::money_format($collection->Amount)}}</td>
-                    </tr>
-                  @endforeach
-                @empty
-                  <tr>
-                    <td colspan="5" class="text-center"> No Business Tax Records Available </td>
-                  </tr>
-                @endforelse
-
-              </tbody>
-            </table>
-          </div>
-           <div class="table-responsive pt-3">
-            <p class="text-title text-bold">Garbage Fee</p>
-            <table class="table table-bordered table-wrap" style="table-layout: fixed;">
-              <thead>
-                <tr class="text-center">
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Department Name</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Total Amount</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Fee Type</th>
-
-                  <th class="text-title p-3" colspan="3">Breakdown</th>
-                </tr>
-                <tr class="text-center">
-                  <th class="text-title p-3">Office Code</th>
-                  <th class="text-title p-3">Account Name</th>
-                  <th class="text-title p-3">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($garbage_fee as $fee)
-                  <tr class="text-center">
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{$fee->department->name}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">PHP {{Helper::money_format($fee->amount)}} </td>
-                    <td rowspan="{{count(json_decode($fee->collection_of_fees)) + 1}}">{{ Helper::fee_type($fee->fee_type)}} </td>
-                  </tr>
-                  @foreach(json_decode($fee->collection_of_fees) as $collection)
-                    <tr >
-                      <td style="font-size: 12px;" class="p-2">{{$collection->OfficeCode}}</td>
-                      <td style="font-size: 12px;" class="p-2">{{$collection->BusinessID}}</td>
-                      <td style="font-size: 12px;" class="p-2">PHP {{Helper::money_format($collection->Amount)}}</td>
-                    </tr>
-                  @endforeach
-                @empty
-                  <tr>
-                    <td colspan="5" class="text-center"> No Garbage Fee Records Available </td>
-                  </tr>
-                @endforelse
-
-              </tbody>
-            </table>
+          <div class="col-md-6">
+            <p class="text-title fw-500">Assessment File: <span class="text-black"><a href="{{$assessment->directory}}/{{$assessment->filename}}" target="_blank">{{$assessment->original_name}}</a></p>
+            <p class="text-title fw-500">Cedula: <span class="text-black">{{Helper::money_format($assessment->cedula)}}</span></p>
+            <p class="text-title fw-500">Barangay Fee: <span class="text-black">{{Helper::money_format($assessment->brgy_fee)}}</span></p>
+            <p class="text-title fw-500">Total Amount: <span class="text-black">{{Helper::money_format($assessment->total_amount)}}</span></p>
           </div>
         </div>
       </div>
-    </div> --}}
+    </div> 
     <div class="card card-rounded shadow-sm mb-2">
       <div class="card-body">
         <div class="row">

@@ -11,7 +11,7 @@ namespace App\Laravel\Controllers\System;
  */
 
 
-use App\Laravel\Models\{BusinessTransaction,Department,RegionalOffice,Application, ApplicationBusinessPermit, ApplicationRequirements, BusinessActivity, TransactionRequirements,CollectionOfFees,ApplicationBusinessPermitFile, Business, BusinessFee,RegulatoryPayment,User,BusinessTaxPayment,BusinessLine};
+use App\Laravel\Models\{BusinessTransaction,Department,RegionalOffice,Application, ApplicationBusinessPermit, ApplicationRequirements, BusinessActivity, TransactionRequirements,CollectionOfFees,ApplicationBusinessPermitFile, Business, BusinessFee,RegulatoryPayment,User,BusinessTaxPayment,BusinessLine,Assessment};
 
 use App\Laravel\Requests\PageRequest;
 use App\Laravel\Events\NotifyDepartmentSMS;
@@ -28,6 +28,8 @@ use App\Laravel\Events\SendEmailDeclinedApplication;
 use App\Laravel\Events\UploadLineOfBusinessToLocal;
 use App\Laravel\Requests\System\TransactionCollectionRequest;
 use App\Laravel\Requests\System\TransactionUpdateRequest;
+use App\Laravel\Requests\System\AssessmentRequest;
+
 use Carbon,Auth,DB,Str,ImageUploader,Helper,Event,FileUploader,Curl,PDF;
 use Illuminate\Support\Facades\Log;
 
@@ -263,9 +265,8 @@ class BusinessTransactionController extends Controller
 
 		$this->data['department'] =  Department::pluck('name','id')->toArray();
 
-		$this->data['regulatory_fee'] = BusinessFee::where('transaction_id',$id)->where('fee_type' , 0)->get();
-		$this->data['garbage_fee'] = BusinessFee::where('transaction_id',$id)->where('fee_type' , 2)->get();
-        $this->data['business_tax'] = BusinessFee::where('transaction_id',$id)->where('fee_type' , 1)->get();
+		$this->data['assessment'] = Assessment::where('transaction_id',$id)->first();
+
         $this->update_status($id);
 		$this->data['page_title'] = "Transaction Details";
 		return view('system.business-transaction.show',$this->data);
@@ -822,123 +823,47 @@ class BusinessTransactionController extends Controller
 	public function assessment (PageRequest $request , $id = NULL){
 		$auth = Auth::user();
 		$this->data['page_title'] .= " - Assesment Details";
-		$this->data['transaction'] = BusinessTransaction::find($id);
 
-		$this->data['business_fees'] = BusinessFee::where('transaction_id',$id)->where('office_code',$auth->department->code)->get();
+		$this->data['transaction'] = BusinessTransaction::find($id);
+		$this->data['business_fees'] = Assessment::where('transaction_id',$id)->get();
 
 		return view('system.business-transaction.assessment',$this->data);
 	}
 
-	public function get_assessment(PageRequest $request , $id = NULL){
+	public function get_assessment(AssessmentRequest $request , $id = NULL){
 		DB::beginTransaction();
 		try{
 
 			$auth = Auth::user();
 			$this->data['transaction'] = BusinessTransaction::find($id);
 
-			$request_body = [
-				'business_id' => $request->get('business_id'),
-				'ebriu_application_no' => $request->get('application_no'),
-				'year' => "2021",
-				'office_code' => "99",
-			];
+			$new_assessment = new Assessment();
+			$new_assessment->transaction_id = $id;
+			$new_assessment->cedula = $request->get('cedula');
+			$new_assessment->brgy_fee = $request->get('brgy_fee');
+			$new_assessment->total_amount = $request->get('total_amount');
 
+            if ($request->file('file')) {
+				$ext = $request->file('file')->getClientOriginalExtension();
+				$image = $request->file('file');
 
-			$response = Curl::to(env('ZAMBOANGA_URL'))
-			         ->withData($request_body)
-			         ->asJson( true )
-			         ->returnResponseObject()
-					 ->post();
-			if ($response->content['data'] == NULL) {
-				session()->flash('notification-status', "failed");
-				session()->flash('notification-msg', "No Assesment Found.");
-				return redirect()->route('system.business_transaction.assessment',[$id]);
+				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc'){ 
+					$type = 'file';
+					$original_filename = $request->file('file')->getClientOriginalName();
+					$upload_image = FileUploader::upload($image, 'uploads/transaction/assessment/{$id}');
+				}
+				$new_assessment->path = $upload_image['path'];
+				$new_assessment->directory = $upload_image['directory'];
+				$new_assessment->filename = $upload_image['filename'];
+				$new_assessment->type =$type;
+				$new_assessment->original_name =$original_filename;
 			}
 
-			$regulatory_array = [];
-			$business_array = [];
-			$garbage_array = [];
-
-			foreach ($response->content['data'] as $key => $value) {
-				if ($value['FeeType'] == 0 ) {
-					array_push($regulatory_array, $value);
-				}
-				if ($value['FeeType'] == 1 ) {
-					array_push($business_array, $value);
-				}
-				if ($value['FeeType'] == 2) {
-					array_push($garbage_array, $value);
-				}
-			}
-			if (count($regulatory_array) > 0) {
-				$total_amount = 0 ;
-				foreach ($regulatory_array as $key => $value) {
-					$total_amount += Helper::db_amount($value['Amount']);
-				}
-				$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 0)->first();
-				if ($existing) {
-					$existing->delete();
-				}
-				$new_business_fee = new BusinessFee();
-				$new_business_fee->business_id = $this->data['transaction']->business_id;
-				$new_business_fee->transaction_id =$this->data['transaction']->id;
-				$new_business_fee->collection_of_fees = json_encode($regulatory_array);
-				$new_business_fee->amount = Helper::db_amount($total_amount);
-				$new_business_fee->status = "PENDING";
-				$new_business_fee->office_code = $request->get('office_code');
-				$new_business_fee->fee_type = 0;
-				$new_business_fee->save();
-
-			}
-
-			if (count($business_array) > 0) {
-				$total_amount = 0 ;
-				foreach ($business_array as $key => $value) {
-					$total_amount += Helper::db_amount($value['Amount']);
-				}
-				$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 1)->first();
-				if ($existing) {
-					$existing->delete();
-				}
-				$new_business_fee = new BusinessFee();
-				$new_business_fee->business_id = $this->data['transaction']->business_id;
-				$new_business_fee->transaction_id =$this->data['transaction']->id;
-				$new_business_fee->collection_of_fees = json_encode($business_array);
-				$new_business_fee->amount = Helper::db_amount($total_amount);
-				$new_business_fee->status = "PENDING";
-				$new_business_fee->office_code = $request->get('office_code');
-				$new_business_fee->fee_type = 1;
-				$new_business_fee->save();
-
-
-			}
-
-			if (count($garbage_array) > 0) {
-				$total_amount = 0 ;
-				foreach ($garbage_array as $key => $value) {
-					$total_amount += Helper::db_amount($value['Amount']);
-				}
-				$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 2)->first();
-				if ($existing) {
-					$existing->delete();
-				}
-				$new_business_fee = new BusinessFee();
-				$new_business_fee->business_id = $this->data['transaction']->business_id;
-				$new_business_fee->transaction_id =$this->data['transaction']->id;
-				$new_business_fee->collection_of_fees = json_encode($garbage_array);
-				$new_business_fee->amount = Helper::db_amount($total_amount);
-				$new_business_fee->status = "PENDING";
-				$new_business_fee->office_code = $request->get('office_code');
-				$new_business_fee->fee_type = 2;
-				$new_business_fee->save();
-
-
-			}
-
+            $new_assessment->save();
 			DB::commit();
 			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "Record Found.");
-			return redirect()->route('system.business_transaction.assessment',$id);
+			session()->flash('notification-msg', "Assesment successfully added.");
+			return redirect()->route('system.business_transaction.show',$id);
 		}catch(\Exception $e){
 			DB::rollback();
 			session()->flash('notification-status', "failed");
