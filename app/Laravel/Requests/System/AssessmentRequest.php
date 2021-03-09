@@ -9,10 +9,13 @@ class AssessmentRequest extends RequestManager{
 
 		$rules = [
 			'file' => "required",
-			'cedula' => "required",
-			'brgy_fee' => "required|numeric|min:0",
-			'total_amount' => "required|numeric|min:0",
 		];
+
+		if(Auth::user()->department == 99){
+			$rules['total_amount'] = "required|numeric|min:0";
+			$rules['cedula'] = "required";
+			$rules['brgy_fee'] = "required|numeric|min:0";
+		}
 	
 		return $rules;
 	}
