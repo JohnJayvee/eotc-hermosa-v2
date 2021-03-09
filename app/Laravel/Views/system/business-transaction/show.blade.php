@@ -256,16 +256,37 @@
             <h5 class="text-title text-uppercase">Assessment Details</h5>
           </div>
           <div class="col-md-6">
-            <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
+            @if(Auth::user()->type == "processor" and $transaction->department_involved)
+              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
+              <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
+              @endif
+            @endif
           </div>
-         @if($assessment)
-          <div class="col-md-6">
-            <p class="text-title fw-500">Assessment File: <span class="text-black"><a href="{{$assessment->directory}}/{{$assessment->filename}}" target="_blank">{{$assessment->original_name}}</a></p>
-            <p class="text-title fw-500">Cedula: <span class="text-black">{{Helper::money_format($assessment->cedula)}}</span></p>
-            <p class="text-title fw-500">Barangay Fee: <span class="text-black">{{Helper::money_format($assessment->brgy_fee)}}</span></p>
-            <p class="text-title fw-500">Total Amount: <span class="text-black">{{Helper::money_format($assessment->total_amount)}}</span></p>
+          <div class="table-responsive pt-2">
+            <table class="table table-bordered table-wrap" style="table-layout: fixed;">
+              <thead>
+                <tr>
+                  <th class="text-title p-3">Department Name</th>
+                  <th class="text-title p-3">Assessment File</th>
+                  <th class="text-title p-3">Cedula</th>
+                  <th class="text-title p-3">Barangay Fee</th>
+                  <th class="text-title p-3">Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse($assessments as $value)
+                  <tr>
+                     <td>{{str::title($value->department->name)}}</td>
+                     <td><a href="{{$value->directory}}/{{$value->filename}}" target="_blank">{{$value->original_name}}</a></td>
+                     <td>{{Helper::money_format($value->cedula)}}</td>
+                     <td>{{Helper::money_format($value->brgy_fee)}}</td>
+                     <td>{{Helper::money_format($value->total_amount)}}</td>
+                  </tr>
+                @empty
+                @endforelse
+              </tbody>
+            </table>
           </div>
-        @endif
         </div>
       </div>
     </div>

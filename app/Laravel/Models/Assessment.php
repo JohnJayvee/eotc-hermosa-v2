@@ -63,5 +63,9 @@ class Assessment extends Authenticatable{
         return $this->BelongsTo("App\Laravel\Models\BusinessTransaction",'transaction_id','id');
     }
 
+    public function department(){
+        return $this->BelongsTo("App\Laravel\Models\Department",'department_id','id');
+    }
+
    
 }

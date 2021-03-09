@@ -16,6 +16,7 @@ class CreateTableAssessment extends Migration
         Schema::create('assessment', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('transaction_id')->nullable();
+            $table->string('department_id')->nullable();
             $table->string('cedula')->nullable();
             $table->string('brgy_fee')->nullable();
             $table->string('total_amount')->nullable();

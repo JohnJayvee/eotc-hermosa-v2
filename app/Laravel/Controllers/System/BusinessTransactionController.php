@@ -265,8 +265,7 @@ class BusinessTransactionController extends Controller
 
 		$this->data['department'] =  Department::pluck('name','id')->toArray();
 
-		$this->data['assessment'] = Assessment::where('transaction_id',$id)->first();
-
+		$this->data['assessments'] = Assessment::where('transaction_id',$id)->get();
         $this->update_status($id);
 		$this->data['page_title'] = "Transaction Details";
 		return view('system.business-transaction.show',$this->data);
@@ -832,6 +831,7 @@ class BusinessTransactionController extends Controller
 
 	public function get_assessment(AssessmentRequest $request , $id = NULL){
 		DB::beginTransaction();
+
 		try{
 
 			$auth = Auth::user();
@@ -839,6 +839,7 @@ class BusinessTransactionController extends Controller
 
 			$new_assessment = new Assessment();
 			$new_assessment->transaction_id = $id;
+			$new_assessment->department_id = Auth::user()->department_id;
 			$new_assessment->cedula = $request->get('cedula');
 			$new_assessment->brgy_fee = $request->get('brgy_fee');
 			$new_assessment->total_amount = $request->get('total_amount');
