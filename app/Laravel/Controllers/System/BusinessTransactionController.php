@@ -848,10 +848,15 @@ class BusinessTransactionController extends Controller
 				$ext = $request->file('file')->getClientOriginalExtension();
 				$image = $request->file('file');
 
-				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc'){ 
+				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
 					$type = 'file';
 					$original_filename = $request->file('file')->getClientOriginalName();
 					$upload_image = FileUploader::upload($image, 'uploads/transaction/assessment/{$id}');
+				}
+				if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
+					$type = 'image';
+					$original_filename = $request->file('file')->getClientOriginalName();
+					$upload_image = ImageUploader::upload($image, 'uploads/transaction/assessment/{$id}');
 				}
 				$new_assessment->path = $upload_image['path'];
 				$new_assessment->directory = $upload_image['directory'];

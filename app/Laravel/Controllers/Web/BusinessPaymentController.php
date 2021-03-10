@@ -48,7 +48,7 @@ class BusinessPaymentController extends Controller
 			return redirect()->back();
 		}
 		
-        $this->data['assessment'] = Assessment::where('transaction_id', $this->data['transaction']->id)->first();
+        $this->data['assessments'] = Assessment::where('transaction_id', $this->data['transaction']->id)->get();
         
         return view('web.business.payment',$this->data);
     }

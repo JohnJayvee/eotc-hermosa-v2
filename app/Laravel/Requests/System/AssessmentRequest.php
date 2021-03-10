@@ -8,7 +8,7 @@ class AssessmentRequest extends RequestManager{
 	public function rules(){
 
 		$rules = [
-			'file' => "required",
+			'file' => "required|mimes:png,jpg,jpeg,pdf,xlsx",
 		];
 
 		if(Auth::user()->department->code == "99"){
