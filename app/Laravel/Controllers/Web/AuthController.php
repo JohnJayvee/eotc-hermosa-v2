@@ -196,8 +196,7 @@ class AuthController extends Controller{
                 $ext = $image->getClientOriginalExtension();
                 $original_name = $image->getClientOriginalName();
                 $file_type = 'gov_id_1';
-                $filename = strtoupper(str_replace('-', ' ', Helper::resolve_file_name($file_type)). "_" . $new_customer->name) . "." . $ext;
-
+                $filename = strtoupper(str_replace('-', '_', Helper::resolve_file_name($file_type))."_". $new_customer->name).".". $ext;
                 $upload_image = FileUploader::upload($image, 'uploads/'.$customer_id.'/file',$filename);
 
                 $new_file = new CustomerFile;
@@ -215,8 +214,7 @@ class AuthController extends Controller{
                 $ext = $image->getClientOriginalExtension();
                 $original_name = $image->getClientOriginalName();
                 $file_type = 'gov_id_2';
-                $filename = strtoupper(str_replace('-', ' ', Helper::resolve_file_name($file_type)). "_" . $new_customer->name) . "." . $ext;
-
+                $filename = strtoupper(str_replace('-', '_', Helper::resolve_file_name($file_type))."_". $new_customer->name).".". $ext;
                 $upload_image = FileUploader::upload($image, 'uploads/'.$customer_id.'/file',$filename);
 
                 $new_file = new CustomerFile;
