@@ -375,11 +375,11 @@
         });
 
         $(this).get_region("#input_region","#input_province","#input_town","#input_brgy","{{old('region','030000000')}}")
-        $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030805000')}}");
+        $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030803000')}}");
 
         function load_barangay() {
-            var _val = "030805000";
-            var _text = "BATAAN - HERMOSA";
+            var _val = "030803000";
+            var _text = "BATAAN - CITY OF BALANGA";
             var _region = "REGION III (CENTRAL LUZON)";
             $(this).get_brgy(_val, "#input_brgy", "");
             $('#input_zipcode').val('');

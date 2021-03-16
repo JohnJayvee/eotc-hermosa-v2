@@ -173,7 +173,7 @@ class AuthController extends Controller{
 
             $new_customer->region = "030000000";
             $new_customer->region_name = $request->get('region_name');
-            $new_customer->town = "030805000";
+            $new_customer->town = "030803000";
             $new_customer->town_name = $request->get('town_name');
             $new_customer->barangay = $request->get('brgy');
             $new_customer->barangay_name = $request->get('brgy_name');

@@ -270,7 +270,7 @@
                                 </div>
                             </div>
                             <input type="hidden" class="form-control" name="region_name" id="input_region_name" value="{{old('region_name', 'REGION III (CENTRAL LUZON)')}}">
-                            <input type="hidden" class="form-control" name="town_name" id="input_town_name" value="{{old('town_name', 'BATAAN - HERMOSA')}}">
+                            <input type="hidden" class="form-control" name="town_name" id="input_town_name" value="{{old('town_name', 'BATAAN - CITY OF BALANGA')}}">
                             <input type="hidden" class="form-control" name="brgy_name" id="input_brgy_name" value="{{old('brgy_name')}}">
 
                             <div class="row">
@@ -944,7 +944,7 @@
 
         load_barangay();
         $(this).get_region("#input_region", "#input_province", "#input_town", "#input_brgy", "{{old('region', '030000000')}}")
-        $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030805000')}}");
+        $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030803000')}}");
 
         $("#input_region").on("change", function () {
             var _val = $(this).val();
@@ -963,8 +963,8 @@
         });
 
         function load_barangay() {
-            var _val = "030805000";
-            var _text = "BATAAN - HERMOSA";
+            var _val = "030803000";
+            var _text = "BATAAN - CITY OF BALANGA";
             $(this).get_brgy(_val, "#input_brgy", "");
             $(this).get_brgy(_val, "#input_owner_brgy", "");
             $('#input_zipcode').val('');
@@ -976,7 +976,7 @@
         @endif
 
         @if(strlen(old('brgy')) > 0)
-        $(this).get_brgy("{{old('town','030805000')}}", "#input_brgy", "{{old('brgy')}}");
+        $(this).get_brgy("{{old('town','030803000')}}", "#input_brgy", "{{old('brgy')}}");
         @endif
 
         $("#input_brgy").on("change", function () {
@@ -1000,7 +1000,7 @@
         // Lessor
         load_lessor_barangay();
         $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
-        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030805000')}}");
+        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
 
         $("#input_lessor_region").on("change", function () {
             var _val = $(this).val();
@@ -1019,8 +1019,8 @@
         });
 
         function load_lessor_barangay() {
-            var _val = "030805000";
-            var _text = "BATAAN - HERMOSA";
+            var _val = "030803000";
+            var _text = "BATAAN - CITY OF BALANGA";
             $(this).get_brgy(_val, "#input_lessor_brgy", "");
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
@@ -1031,7 +1031,7 @@
         @endif
 
         @if(strlen(old('lessor_brgy')) > 0)
-        $(this).get_brgy("{{old('lessor_town','030805000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
+        $(this).get_brgy("{{old('lessor_town','030803000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
         @endif
 
         $("#input_lessor_brgy").on("change", function () {
