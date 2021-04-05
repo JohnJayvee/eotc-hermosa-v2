@@ -8,6 +8,7 @@ namespace App\Laravel\Controllers\Web;
 use App\Laravel\Models\User;
 use App\Laravel\Models\Business;
 use App\Laravel\Models\BusinessLine;
+use App\Laravel\Models\ApplicationBusinessPermit;
 use App\Laravel\Requests\PageRequest;
 use App\Laravel\Events\SendNewBusinessCV;
 use App\Laravel\Models\BusinessTransaction;
@@ -35,7 +36,7 @@ class BusinessController extends Controller
 		array_merge($this->data, parent::get_data());
 
 		$this->data['business_scopes'] = ["" => "Choose Business Scope",'national' => "National",'regional' => "Regional",'municipality' => "City/Municipality",'barangay' => "Barangay"];
-		$this->data['business_types'] = ["" => "Choose Business Type",'sole_proprietorship' => "Sole Proprietorship",'cooperative' => "Cooperative",'corporation' => "Corporation",'partnership' => "Partnership", 'association' => "Association"];
+		$this->data['business_types'] = ["" => "Choose Business Type",'sole_proprietorship' => "Sole Proprietorship",'cooperative' => "Cooperative",'corporation' => "Corporation",'partnership' => "Partnership"];
 		$this->data['transaction_types'] = ['new' => "New Business",'renewal' => "Renewal"];
 		if (Auth::guard('customer')->user()) {
 			$this->data['auth'] = Auth::guard('customer')->user();
@@ -54,58 +55,6 @@ class BusinessController extends Controller
 		$this->data['page_title'] = "Create Business CV";
         $this->data['auth'] = Auth::guard('customer')->user();
 
-       /* if($request->business_id_no){
-            $request_body = [
-                'business_id' => $request->business_id_no,
-            ];
-            $response = Curl::to(env('OBOSS_BUSINESS_PROFILE'))
-                         ->withData($request_body)
-                         ->asJson( true )
-                         ->returnResponseObject()
-                         ->post();
-
-            if($response->status == "200"){
-                $content = $response->content;
-                session()->flash('notification-status', "success");
-                session()->flash('notification-msg', "Business validated");
-                session()->forget('negativelist');
-                $this->data['business'] = $response->content['data'];
-                $this->data['business_type_f'] = $response->content['data'];
-
-                foreach ($this->data['business']['LineOfBusiness'] as $key => $value) {
-                    if(!empty($value['Class'])){
-                        $particulars = !empty($value['Particulars']) ? " (".$value['Particulars'].")" : "";
-                        $this->data['lob'][] = $value['Class'].$particulars;
-                    }
-                }
-                switch ($this->data['business']['Organization']) {
-                    case 'SINGLE PROPRIETORSHIP':
-                        $this->data['business_type_f'] = 'sole_proprietorship';
-                        break;
-                    case 'PARTNERSHIP':
-                        $this->data['business_type_f'] = 'partnership';
-                        break;
-                    case 'CORPORATION':
-                        $this->data['business_type_f'] = 'corporation';
-                        break;
-                    case 'COOPERATIVE':
-                        $this->data['business_type_f'] = 'cooperative';
-                        break;
-                    case 'ASSOCIATION':
-                        $this->data['business_type_f'] = 'association';
-                        break;
-                    default:
-                        $this->data['business_type_f'] = null;
-                        break;
-                }
-                session()->put('line_of_business', $this->data['business']['LineOfBusiness']);
-            } elseif ($response->status == "400") {
-                session()->put('negativelist', 1);
-            }else {
-                session()->flash('notification-status', "failed");
-                session()->flash('notification-msg', "Business not found");
-            }
-        }*/
 		return view('web.business.create',$this->data);
 
     }
@@ -182,16 +131,10 @@ class BusinessController extends Controller
             $new_business->female_residing_in_city = $request->get('female_residing_in_city');
 
             $new_business->capitalization = $request->get('capitalization');
-            $new_business->region_name = $request->get('region_name');
-            $new_business->town_name = $request->get('town_name');
-            $new_business->region = $request->get('region');
-            $new_business->town = $request->get('town');
-            $new_business->brgy_name = $request->get('brgy_name');
-            $new_business->brgy = $request->get('brgy');
-            $new_business->zipcode = $request->get('zipcode');
-            $new_business->unit_no = $request->get('unit_no');
-            $new_business->street_address = $request->get('street_address');
             $new_business->email = $request->get('email');
+            $new_business->location = $request->get('location');
+            $new_business->geo_long = $request->get('geo_long');
+            $new_business->geo_lat = $request->get('geo_lat');
             $new_business->mobile_no = $request->get('mobile_no');
             $new_business->telephone_no = $request->get('telephone_no');
             $new_business->tin_no = $request->get('tin_no');
@@ -221,17 +164,19 @@ class BusinessController extends Controller
                     BusinessLine::insert($data);
                 }
             }
+
             $bplo = User::where('type', 'admin')->first();
             DB::commit();
-            $insert[] = [
-                'email' => $bplo->email,
-                'contact_number' => $bplo->contact_number,
-                'businessOwner' => Auth::guard('customer')->user()->name,
-            ];
-            // send Email
-            $notification_data = new SendNewBusinessCVEmail($insert);
-            Event::dispatch('send-new-business_cv-email', $notification_data);
-
+            if($bplo){
+                $insert[] = [
+                    'email' => $bplo->email,
+                    'contact_number' => $bplo->contact_number,
+                    'businessOwner' => Auth::guard('customer')->user()->name,
+                ];
+                // send Email
+                $notification_data = new SendNewBusinessCVEmail($insert);
+                Event::dispatch('send-new-business_cv-email', $notification_data);
+            }
             // send SMS
             //$notification_data = new SendNewBusinessCV($insert);
             //Event::dispatch('send-new-business_cv', $notification_data);
@@ -320,7 +265,6 @@ class BusinessController extends Controller
             $business->business_tin = $request->business_tin;
             $business->tax_incentive = $request->tax_incentive;
 
-
             $business->owner_fname = $request->owner_firstname;
             $business->owner_mname = $request->owner_middlename;
             $business->owner_lname = $request->owner_lastname;
@@ -370,15 +314,9 @@ class BusinessController extends Controller
             $business->female_residing_in_city = $request->get('female_residing_in_city');
 
             $business->capitalization = $request->get('capitalization');
-            $business->region_name = $request->get('region_name');
-            $business->town_name = $request->get('town_name');
-            $business->region = $request->get('region');
-            $business->town = $request->get('town');
-            $business->brgy_name = $request->get('brgy_name');
-            $business->brgy = $request->get('brgy');
-            $business->zipcode = $request->get('zipcode');
-            $business->unit_no = $request->get('unit_no');
-            $business->street_address = $request->get('street_address');
+            $business->location = $request->get('location');
+            $business->geo_lat = $request->get('geo_lat');
+            $business->geo_long = $request->get('geo_long');
             $business->email = $request->get('email');
             $business->mobile_no = $request->get('mobile_no');
             $business->telephone_no = $request->get('telephone_no');
@@ -425,11 +363,9 @@ class BusinessController extends Controller
             session()->flash('notification-msg', "You dont have access for this process");
             return redirect()->route('web.main.index');
         }
-
-
     }
 
-     public function e_permit_view(PageRequest $request , $id = NULL){
+    public function e_permit_view(PageRequest $request , $id = NULL){
 
         $this->data['d1']  = new Carbon('12/31');
         $this->data['business_transaction'] = BusinessTransaction::where('id', $id)->where('digital_certificate_released',"1")->first();
@@ -444,8 +380,6 @@ class BusinessController extends Controller
             session()->flash('notification-msg', "You dont have access for this process");
             return redirect()->route('web.main.index');
         }
-
-
     }
 
     public function delete(PageRequest $request, $id = null)
@@ -473,4 +407,17 @@ class BusinessController extends Controller
 
     }
 
+    public function download (PageRequest $request , $id = NULL){
+
+        $transaction = BusinessTransaction::find($id);
+        $this->data['business'] = Business::find($transaction->business_id);
+        $this->data['application'] = ApplicationBusinessPermit::find($transaction->business_permit_id);
+        $this->data['activities'] = BusinessActivity::where('application_business_permit_id', $this->data['application']->id)->get();
+
+        $customPaper = array(0,0,700.00,1200);
+        $pdf = PDF::loadView('pdf.permit-application',$this->data)->setPaper($customPaper);
+
+        return $pdf->download("permit-application.pdf");
+
+    }
 }

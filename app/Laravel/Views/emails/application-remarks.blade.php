@@ -64,7 +64,7 @@
 			</tr>
 			<tr>
 				<th colspan="2"><p style="float: left;text-align: justify;">Hello {{Str::title($full_name)}}, <p>
-					<p style="float: left;text-align: justify;">Good day. We are pleased to inform you that your application has been approved by our processor and is now for payment.</p>
+					<p style="float: left;text-align: justify;">One of the assigned departments for your application has already placed a remark. Below are the details:</p>
 				</th>
 			</tr>
 
@@ -77,20 +77,16 @@
 				<th style="text-align: right;">{{Str::title($department_name)}}</th>
 			</tr>
 			<tr class="text-blue">
+				<th style="text-align: left;padding: 10px;">Remarks:</th>
+				<th style="text-align: right;">{{Str::title($remarks)}}</th>
+			</tr>
+			<tr class="text-blue">
 				<th style="text-align: left;padding: 10px;">Date:</th>
-				<th style="text-align: right;">{{Helper::date_only($modified_at)}}</th>
-			</tr>
-			<tr class="text-blue">
-				<th style="text-align: left;padding: 10px;">Amount:</th>
-				<th style="text-align: right;">{{Str::title($amount)}}</th>
-			</tr>
-			<tr class="text-blue">
-				<th style="text-align: left;padding: 10px;">Payment Reference Number:</th>
-				<th style="text-align: right;">{{Str::title($ref_num)}}</th>
+				<th style="text-align: right;">{{Helper::date_only($created_at)}}</th>
 			</tr>
 			<tr>
 				<th colspan="2">
-					<p style="float: left;text-align: justify;">Please visit the <a href="{{env('APP_URL')}}">{{env("APP_URL")}}</a> and input the payment reference number to the E-Payment section to pay. This payment reference number will expire at 11:59 PM. You can pay via online(Debit/Credit card, e-wallet, etc.) or over-the-counter (7Eleven, Bayad Center, Cebuana Lhuillier, and to other affiliated partners)</p><br>
+					<p>We'll keep you updated on your application.</p>
 					<p>Thank you for choosing EOTC-PHP!</p>
 				</th>
 			</tr>

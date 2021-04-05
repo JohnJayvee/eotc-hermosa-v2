@@ -176,7 +176,6 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-control form-control-sm" type="checkbox" name="checkbox" value="yes" style="width: 30px; height: 30px;">
                                             <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
-                                            {{-- <small class="my-2" for="inlineCheckbox3">Please Specify entity:</small> --}}
                                         </div>
                                         <script>
                                             $(function(){
@@ -262,75 +261,29 @@
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Capitalization <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control form-control-sm {{ $errors->first('capitalization') ? 'is-invalid': NULL  }}"  name="capitalization" value="{{old('capitalization') }}">
+                                        <input type="number" class="form-control form-control-sm {{ $errors->first('capitalization') ? 'is-invalid': NULL  }}"  name="capitalization" value="{{old('capitalization') }}" autocomplete="off">
                                         @if($errors->first('capitalization'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('capitalization')}}</small>
                                         @endif
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" class="form-control" name="region_name" id="input_region_name" value="{{old('region_name', 'REGION III (CENTRAL LUZON)')}}">
-                            <input type="hidden" class="form-control" name="town_name" id="input_town_name" value="{{old('town_name', 'BATAAN - CITY OF BALANGA')}}">
-                            <input type="hidden" class="form-control" name="brgy_name" id="input_brgy_name" value="{{old('brgy_name')}}">
-
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="form-group">
-                                    <label for="exampleInputEmail1" class="text-form pb-2">Region <span class="text-danger">*</span></label>
-                                       {!!Form::select('region',[],old('region'),['id' => "input_region",'class' => "form-control form-control-sm classic ".($errors->first('region') ? 'border-red' : NULL)])!!}
-                                        @if($errors->first('region'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('region')}}</small>
+                                        <label for="exampleInputEmail1" class="text-form pb-2">Exact Location <span class="text-danger">*</span></label>
+                                        <input type="text" id="map-address" class="form-control form-control-sm {{ $errors->first('location') ? 'is-invalid': NULL  }}"  name="location" value="{{old('location') }}">
+                                        @if($errors->first('location'))
+                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('location')}}</small>
                                         @endif
+                                        <input type="hidden" name="geo_long" id="geo_long" value="{{ old('geo_long') }}">
+                                        <input type="hidden" name="geo_lat" id="geo_lat" value="{{ old('geo_lat') }}">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label class="text-form pb-2">City Municipality <span class="text-danger">*</span></label>
-                                        {!!Form::select('town',[],old('town'),['id' => "input_town",'class' => "form-control form-control-sm classic ".($errors->first('town') ? 'border-red' : NULL)])!!}
-                                        @if($errors->first('town'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('town')}}</small>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-lg-4">
-                                    <div class="form-group">
-                                        <label class="text-form pb-2">Barangay <span class="text-danger">*</span></label>
-                                        {!!Form::select('brgy',[],old('brgy'),['id' => "input_brgy",'class' => "form-control form-control-sm classic ".($errors->first('brgy') ? 'border-red' : NULL)])!!}
-                                        @if($errors->first('brgy'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('brgy')}}</small>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-2 col-lg-2">
-                                    <div class="form-group">
-                                        <label for="input_zipcode" class="text-form pb-2">Zipcode <span class="text-danger">*</span></label>
-                                        <input type="text" id="input_zipcode" class="form-control form-control-sm  {{ $errors->first('zipcode') ? 'is-invalid': NULL  }}" name="zipcode" value="{{old('zipcode')}}" readonly="readonly">
-                                        @if($errors->first('zipcode'))
-                                        <p class="help-block text-danger">{{$errors->first('zipcode')}}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">House/Bldg No. <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control form-control-sm {{ $errors->first('unit_no') ? 'is-invalid': NULL  }}"  name="unit_no" value="{{old('unit_no'), ($business['BusBldgName'] ?? '').' '.($business['BusBldgNo'] ?? '')}}">
-                                        @if($errors->first('unit_no'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('unit_no')}}</small>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">Street Address <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control form-control-sm {{ $errors->first('street_address') ? 'is-invalid': NULL  }}"  name="street_address" value="{{old('street_address', $business['BusStreet'] ?? '') }}">
-                                        @if($errors->first('street_address'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('street_address')}}</small>
-                                        @endif
-                                    </div>
+                                <div class="col-lg-12">
+                                    <div id="map" class="card-shadow mt-3"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -831,13 +784,60 @@
   span.select2.select2-container{
     width: 100% !important;
   }
+   #map {
+    height: 400px !important;
+    width: 100% !important; 
+  }
 </style>
 @endsection
 
 @section('page-scripts')
 <script src="{{asset('system/vendors/select2/select2.min.js')}}" type="text/javascript"></script>
-
+<script src="{{asset('system/vendors/locationpicker/locationpicker.jquery.js')}}" type="text/javascript"></script>
+<script src="http://maps.google.com/maps/api/js?sensor=true&v=3&libraries=places&key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
 <script type="text/javascript">
+    
+$(function(){
+
+    $('#map-address').on('click',function(){
+        $(this).val('');
+    })
+         // var x = $('#map-address').val()
+    $('#states').text( $("#map-address").val())
+    $('#postcode').text( $("#map-address").val())
+
+    function updateControls(addressComponents) {
+        $('#postcode').val(addressComponents.postalCode);       
+    }
+
+    $('#map').locationpicker({
+        location: {
+          latitude:  14.6741,
+          longitude: 120.5113
+        },
+        zoom: 10,
+        radius: 0,
+        mapTypeId: 'satellite',
+
+        inputBinding : {
+            locationNameInput: $('#map-address'),
+            latitudeInput: $('#geo_lat'),
+            longitudeInput: $('#geo_long'),
+        },
+        enableAutocomplete: true,
+        autocompleteOptions: {
+          componentRestrictions: {country: 'ph'}
+        },
+        onchanged: function (currentLocation, isMarkerDropped) {
+          var addressComponents = $(this).locationpicker('map').location.addressComponents;
+          updateControls(addressComponents);
+        },
+        oninitialized: function(component) {
+          var addressComponents = $(component).locationpicker('map').location.addressComponents;
+          updateControls(addressComponents);
+        }
+    });
+});
     $.fn.get_region = function (input_region, input_province, input_city, input_brgy, selected) {
 
         $(input_city).empty().prop('disabled', true)

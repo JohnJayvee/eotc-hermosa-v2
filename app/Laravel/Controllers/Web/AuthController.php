@@ -190,57 +190,73 @@ class AuthController extends Controller{
 
             $customer_id = $new_customer->id;
 
-
-            if($request->hasFile('gov_id_1')) {
+            if ($request->file('gov_id_1')) {
+                $ext = $request->file('gov_id_1')->getClientOriginalExtension();
                 $image = $request->file('gov_id_1');
-                $ext = $image->getClientOriginalExtension();
-                $original_name = $image->getClientOriginalName();
-                $file_type = 'gov_id_1';
-                $filename = strtoupper(str_replace('-', '_', Helper::resolve_file_name($file_type))."_". $new_customer->name).".". $ext;
-                $upload_image = FileUploader::upload($image, 'uploads/'.$customer_id.'/file',$filename);
 
+                if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
+                    $type = 'gov_id_1';
+                    $original_filename = $request->file('gov_id_1')->getClientOriginalName();
+                    $upload_image = FileUploader::upload($image,'uploads/customer/file/'.$customer_id);
+                }
+                if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
+                    $type = 'image';
+                    $original_filename = $request->file('gov_id_1')->getClientOriginalName();
+                    $upload_image = ImageUploader::upload($image,'uploads/customer/file/'.$customer_id);
+                }
                 $new_file = new CustomerFile;
                 $new_file->path = $upload_image['path'];
                 $new_file->directory = $upload_image['directory'];
-                $new_file->filename = $filename;
-                $new_file->type = $file_type;
-                $new_file->original_name = $original_name;
+                $new_file->filename = $upload_image['filename'];
+                $new_file->type =$type;
+                $new_file->original_name =$original_filename;
                 $new_file->application_id = $customer_id;
                 $new_file->save();
             }
 
-            if($request->hasFile('gov_id_2')) {
+            if ($request->file('gov_id_2')) {
+                $ext = $request->file('gov_id_2')->getClientOriginalExtension();
                 $image = $request->file('gov_id_2');
-                $ext = $image->getClientOriginalExtension();
-                $original_name = $image->getClientOriginalName();
-                $file_type = 'gov_id_2';
-                $filename = strtoupper(str_replace('-', '_', Helper::resolve_file_name($file_type))."_". $new_customer->name).".". $ext;
-                $upload_image = FileUploader::upload($image, 'uploads/'.$customer_id.'/file',$filename);
-
+                if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
+                    $type = 'gov_id_2';
+                    $original_filename = $request->file('gov_id_2')->getClientOriginalName();
+                    $upload_image = FileUploader::upload($image, 'uploads/customer/file/'.$customer_id);
+                }
+                if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
+                    $type = 'image';
+                    $original_filename = $request->file('gov_id_2')->getClientOriginalName();
+                    $upload_image = ImageUploader::upload($image, 'uploads/customer/file/'.$customer_id);
+                }
                 $new_file = new CustomerFile;
                 $new_file->path = $upload_image['path'];
                 $new_file->directory = $upload_image['directory'];
-                $new_file->filename = $filename;
-                $new_file->type = $file_type;
-                $new_file->original_name = $original_name;
+                $new_file->filename = $upload_image['filename'];
+                $new_file->type =$type;
+                $new_file->original_name =$original_filename;
                 $new_file->application_id = $customer_id;
                 $new_file->save();
             }
-            if($request->hasFile('business_permit')) {
+
+            if ($request->file('business_permit')) {
+                $ext = $request->file('business_permit')->getClientOriginalExtension();
                 $image = $request->file('business_permit');
-                $ext = $image->getClientOriginalExtension();
-                $original_name = $image->getClientOriginalName();
-                $file_type = 'business_permit';
-                $filename = strtoupper(str_replace('-', ' ', Helper::resolve_file_name($file_type)). "_" . $new_customer->name) . "." . $ext;
 
-                $upload_image = FileUploader::upload($image, 'uploads/'.$customer_id.'/file',$filename);
-
+                if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
+                    $type = 'business_permit';
+                    $original_filename = $request->file('business_permit')->getClientOriginalName();
+                    $upload_image = FileUploader::upload($image, 'uploads/customer/file/'.$customer_id);
+                }
+                if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
+                    $type = 'image';
+                    $original_filename = $request->file('business_permit')->getClientOriginalName();
+                    $upload_image = ImageUploader::upload($image, 'uploads/customer/file/'.$customer_id);
+                }
                 $new_file = new CustomerFile;
                 $new_file->path = $upload_image['path'];
                 $new_file->directory = $upload_image['directory'];
-                $new_file->filename = $filename;
-                $new_file->type = $file_type;
-                $new_file->original_name = $original_name;
+                $new_file->filename = $upload_image['filename'];
+                $new_file->type =$type;
+                $new_file->original_name =$original_filename;
                 $new_file->application_id = $customer_id;
                 $new_file->save();
             }

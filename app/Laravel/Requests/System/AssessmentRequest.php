@@ -11,6 +11,9 @@ class AssessmentRequest extends RequestManager{
 			'file' => "required|mimes:png,jpg,jpeg,pdf,xlsx",
 		];
 
+		if(Auth::user()->department->code == "03"){
+			$rules['bfp_fee'] = "required|numeric|min:0";
+		}
 		if(Auth::user()->department->code == "99"){
 			$rules['total_amount'] = "required|numeric|min:0";
 			$rules['cedula'] = "required";

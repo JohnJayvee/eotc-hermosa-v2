@@ -6,7 +6,7 @@
 
 	<style>
 		th.primary{
-			background-color: #D4EDDA;
+			background-color: #D4EDDA; 
 		}
 		table, th, td {
 		  border-collapse: collapse;
@@ -15,7 +15,7 @@
 		}
 
 		table.center {
-			margin-left:auto;
+			margin-left:auto; 
 			margin-right:auto;
 			border-bottom: solid 1px #F0F0F0;
 			border-right: solid 1px #F0F0F0;
@@ -49,7 +49,7 @@
 <body style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;  font-size: 14px; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; height: 100%; line-height: 1.6em; margin: 0;">
 
 	<table class="center bg-white" width="55%">
-
+		
 			<tr>
 				<th colspan="2" class="primary" style="padding: 25px;">
 					<div id="pageElement">
@@ -58,45 +58,48 @@
 					</div>
 				</th>
 			</tr>
-
+		
 			<tr>
 				<th colspan="2" class="text-gray" style="padding: 10px;">Date: {{Helper::date_only(Carbon::now())}} | {{Helper::time_only(Carbon::now())}}</th>
 			</tr>
 			<tr>
-				<th colspan="2"><p style="float: left;text-align: justify;">Hello {{Str::title($full_name)}}, <p>
-					<p style="float: left;text-align: justify;">Good day. We are pleased to inform you that your application has been approved by our processor and is now for payment.</p>
+				<th colspan="2"><p style="float: left;text-align: justify;">Good day, Processor! <p>
+					<p style="float: left;text-align: justify;">This is to inform you that you have received a new application. Below are the details:</p>
 				</th>
 			</tr>
-
+			<tr class="text-blue">
+				<th style="text-align: left;padding: 10px;">Full Name:</th>
+				<th style="text-align: right;">{{$full_name}}</th>
+			</tr>
+			<tr class="text-blue">
+				<th style="text-align: left;padding: 10px;">Company Name:</th>
+				<th style="text-align: right;">{{$company_name}}</th>
+			</tr>
 			<tr class="text-blue">
 				<th style="text-align: left;padding: 10px;">Application Name:</th>
 				<th style="text-align: right;">{{Str::title($application_name)}}</th>
 			</tr>
 			<tr class="text-blue">
-				<th style="text-align: left;padding: 10px;">Department:</th>
+				<th style="text-align: left;padding: 10px;">Peza Unit:</th>
 				<th style="text-align: right;">{{Str::title($department_name)}}</th>
 			</tr>
 			<tr class="text-blue">
+				<th style="text-align: left;padding: 10px;">Code:</th>
+				<th style="text-align: right;">{{$ref_code}}</th>
+			</tr>
+			<tr class="text-blue">
 				<th style="text-align: left;padding: 10px;">Date:</th>
-				<th style="text-align: right;">{{Helper::date_only($modified_at)}}</th>
+				<th style="text-align: right;">{{$created_at}}</th>
 			</tr>
-			<tr class="text-blue">
-				<th style="text-align: left;padding: 10px;">Amount:</th>
-				<th style="text-align: right;">{{Str::title($amount)}}</th>
-			</tr>
-			<tr class="text-blue">
-				<th style="text-align: left;padding: 10px;">Payment Reference Number:</th>
-				<th style="text-align: right;">{{Str::title($ref_num)}}</th>
-			</tr>
+			
 			<tr>
 				<th colspan="2">
-					<p style="float: left;text-align: justify;">Please visit the <a href="{{env('APP_URL')}}">{{env("APP_URL")}}</a> and input the payment reference number to the E-Payment section to pay. This payment reference number will expire at 11:59 PM. You can pay via online(Debit/Credit card, e-wallet, etc.) or over-the-counter (7Eleven, Bayad Center, Cebuana Lhuillier, and to other affiliated partners)</p><br>
 					<p>Thank you for choosing EOTC-PHP!</p>
 				</th>
 			</tr>
-
+		
 	</table>
-
+	
 
 </body>
 </html>

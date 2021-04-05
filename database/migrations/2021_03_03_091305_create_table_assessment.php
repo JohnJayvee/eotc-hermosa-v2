@@ -19,6 +19,7 @@ class CreateTableAssessment extends Migration
             $table->string('department_id')->nullable();
             $table->string('cedula')->nullable();
             $table->string('brgy_fee')->nullable();
+            $table->string('bfp_fee')->nullable();
             $table->string('total_amount')->nullable();
             $table->string('type')->nullable();
             $table->text('path')->nullable();

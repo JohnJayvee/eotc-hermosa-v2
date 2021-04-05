@@ -75,6 +75,7 @@ Route::group(['as' => "web.",
 			Route::post('edit',['as' => "update",'uses' => "BusinessController@business_update"]);
 			Route::get('history/{id?}',['as' => "history",'uses' => "BusinessController@history"]);
             Route::get('application',['as' => "application",'uses' => "BusinessController@application"]);
+            Route::get('download/{id?}',['as' => "download",'uses' => "BusinessController@download"]);
             Route::get('delete/{id?}',['as' => "delete",'uses' => "BusinessController@delete", 'middleware' => "portal.exist:business"]);
             Route::group(['prefix' => "application", 'as' => "application."], function () {
                 Route::get('create',['as' => "create",'uses' => "ApplicationController@create"]);
@@ -94,7 +95,6 @@ Route::group(['as' => "web.",
             Route::get('tax-fee/{id?}',['as' => "tax_fee", 'uses' => "BusinessPaymentController@tax_fee"]);
         	Route::get('payment/{id?}',['as' => "payment", 'uses' => "BusinessPaymentController@payment"]);
             Route::get('download/{id?}',['as' => "download_assessment",'uses' => "BusinessPaymentController@download_assessment"]);
-
         });
 	});
 

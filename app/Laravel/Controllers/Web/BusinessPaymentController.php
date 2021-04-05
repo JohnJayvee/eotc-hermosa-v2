@@ -29,8 +29,6 @@ class BusinessPaymentController extends Controller
 		if (Auth::guard('customer')->user()) {
 			$this->data['auth'] = Auth::guard('customer')->user();
 			$this->data['business_profiles'] = Business::where('customer_id',$this->data['auth']->id)->get();
-			$this->data['quarters'] = ['1' => "1st Quarter" , '2' => "2nd Quarter" , '3' => "3rd Quarter" , '4' => "4th Quarter"];
-
 		}
 		$this->per_page = env("DEFAULT_PER_PAGE",10);
 	}
@@ -49,7 +47,13 @@ class BusinessPaymentController extends Controller
 		}
 		
         $this->data['assessments'] = Assessment::where('transaction_id', $this->data['transaction']->id)->get();
-        
+
+        $cedula_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('cedula');
+        $brgy_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('brgy_fee');
+        $bfp_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('bfp_fee');
+       
+        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $bfp_fee ; 
+       
         return view('web.business.payment',$this->data);
     }
 

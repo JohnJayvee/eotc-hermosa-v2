@@ -20,6 +20,7 @@ use App\Laravel\Events\NotifyBPLOAdminEmail;
  */
 use App\Laravel\Requests\System\BPLORequest;
 use App\Laravel\Events\NotifyDepartmentEmail;
+use App\Laravel\Events\SendEmailRemarks;
 use App\Laravel\Events\SendEmailDigitalCertificate;
 use App\Laravel\Events\SendEmailApprovedBusiness;
 use App\Laravel\Events\SendEmailDeclinedBusiness;
@@ -272,7 +273,6 @@ class BusinessTransactionController extends Controller
     }
 
     public function edit(PageRequest $request,$id=NULL){
-        $this->retrieve_lobs();
         $this->data['count_file'] = TransactionRequirements::where('transaction_id',$id)->count();
 		$this->data['attachments'] = TransactionRequirements::where('transaction_id',$id)->get();
 		$this->data['transaction'] = $request->get('business_transaction_data');
@@ -319,110 +319,23 @@ class BusinessTransactionController extends Controller
 
             // retrieve all lines of business by transaction
             // if empty  disregard
-            $permit_business_lines = BusinessActivity::where('application_business_permit_id', $transaction->business_permit_id)->get();
-            $list_of_line_of_business_save_to_local = array();
+            $permit_business_lines = BusinessActivity::where('application_business_permit_id', $transaction->business_permit_id)->get(['id']);
 
             // handle edit of existing line of businesses
             if($permit_business_lines){
-                $lob_array = [];
-                foreach ($permit_business_lines  as $business_l) {
-                    $lob_array[$business_l->id] = $business_l->b_class."---".$business_l->s_class."---".($business_l->x_class ? $business_l->x_class:"0")."---".$business_l->account_code;
-                }
-
-                if(!empty($lob_array)){
-                    if(request('editables')){
-                        foreach ($lob_array as $key_business => $editable_lob) {
-                            if(in_array($editable_lob, request('editables.old_line'))){
-                                $line_key = array_search($editable_lob, request('editables.old_line'));
-                                $lob_code = request('editables.business_line')[$line_key];
-                                $line = BusinessActivity::where('id', $key_business)->first();
-                                $line->gross_sales = request('editables.amount')[$line_key];
-                                $line->no_of_unit = request('editables.no_of_units')[$line_key];
-                                $line->particulars = strtoupper(request('editables.particulars')[$line_key]);
-
-                                //$line->line_of_business = $lob_code['Class'];
-                                //$line->b_class =  $lob_code['BClass'];
-                                //$line->s_class =  $lob_code['SClass'];
-                                //$line->x_class =  $lob_code['XClass'] ?? 0 ;
-                                //$line->account_code =  $lob_code['AcctCode'];
-                                //$line->reference_code =  $lob_code['RefCode'];
-                                $line->save();
-
-
-                                $data = [
-                                    'application_business_permit_id' => $transaction->application_permit->id,
-                                    'line_of_business' => request('editables.business_line')[$line_key],
-                                    'no_of_unit' =>  request('editables.no_of_units')[$line_key],
-                                    //'capitalization' => $line->capitalization ?? 0 ,
-                                    'gross_sales' => request('editables.amount')[$line_key],
-                                    //'reference_code' => $lob_code ['RefCode'],
-                                    //'b_class' => $lob_code ['BClass'],
-                                    //'s_class' => $lob_code ['SClass'],
-                                    //'x_class' => $lob_code ['XClass'] ?? 0 ,
-                                    //'account_code' => $lob_code ['AcctCode'] ,
-                                    'particulars' => strtoupper(request('editables.particulars')[$line_key])
-                                ];
-
-                                info('updated - ', ['key_line' => $line_key, 'data' => $line]);
-                                array_push($list_of_line_of_business_save_to_local, $data);
-                            }else{
-                                if(!in_array($editable_lob, request('editables.business_line'))){
-                                    info('deleted - ', ['data' => $key_business]);
-                                    BusinessActivity::where('id', $key_business)->delete();
-                                }
-                            }
-                        }
-                    }else{
-                        // all existing business lines has been requested for deletion
-                        foreach ($permit_business_lines as $permit_to_delete) {
-                            $permit_to_delete->delete();
-                        }
-                        info('Deleted All LOB');
-                    }
-                }
+            	BusinessActivity::destroy($permit_business_lines->toArray());
             }
-
-            if(request('business_line')){
-                foreach (request('business_line') as $key_business => $lob_request) {
-                    //$lob_code = $this->data['line_of_businesses_coded'][$lob_request];
-                    /**
-                     * 0 = line of business name
-                     * 1 = reference code
-                     * 2 = b class
-                     * 3 = s class
-                     * 4 = x class
-                     * 5 = account code
-                     * 6 = particular
-                     */
-                    $data = [
-                        'application_business_permit_id' => $transaction->application_permit->id,
-                        'line_of_business' => $request->business_line [$key_business],
-                        'no_of_unit' => $request->no_of_units [$key_business],
-                        'capitalization' => $transaction->application_permit->type == "new" ? $request->amount [$key_business] : ($request->is_new [$key_business] ? $request->amount [$key_business] : 0),
-                        'gross_sales' => $transaction->application_permit->type == "renew" && !$request->is_new [$key_business] ? $request->amount [$key_business] : 0,
-                        //'reference_code' => $lob_code ['RefCode'],
-                        //'b_class' => $lob_code ['BClass'],
-                        //'s_class' => $lob_code ['SClass'],
-                        //'x_class' => $lob_code ['XClass'] ?? 0 ,
-                        //'account_code' => $lob_code ['AcctCode'] ,
-                        'particulars' => strtoupper($request->particulars [$key_business]) ?? ''
-                    ];
-                    BusinessActivity::insert($data);
-                    array_push($list_of_line_of_business_save_to_local, $data);
-
-                }
-            }
-
-            $request_body = [
-                'business_id' => $transaction->business_info->business_id_no,
-                'ebriu_application_no' =>   $transaction->application_permit->application_no,
-                'year' => Carbon::now()->year,
-                'line_of_business' => $list_of_line_of_business_save_to_local
-            ];
-
-            $line_of_business_data = new UploadLineOfBusinessToLocal($request_body);
-            Event::dispatch('upload-line-of-business-to-local', $line_of_business_data);
-
+        	foreach ($request->line_of_business as $key => $v) {
+	            $data = [
+	                'application_business_permit_id' => $transaction->business_permit_id,
+	                'line_of_business' => $request->line_of_business [$key],
+	                'no_of_unit' => $request->no_of_units [$key],
+	                'capitalization' => $request->amount [$key],
+	                //'gross_sales' => $new_business_permit->type == "renew" && !$request->is_new [$key] ? $request->amount [$key] : 0,
+	            ];
+	            BusinessActivity::insert($data);
+        	}
+            
             DB::commit();
 
             session()->flash('notification-status', "success");
@@ -465,27 +378,6 @@ class BusinessTransactionController extends Controller
         $business_transaction->save();
     }
 
-	/*public function bplo_approved (BPLORequest $request ){
-		DB::beginTransaction();
-		try{
-			$transaction_id = $request->get('transaction_id');
-
-			$transaction = BusinessTransaction::find($transaction_id);
-
-			$transaction->department_destination = implode(",", $request->get('department_id'));
-			$transaction->save();
-
-			DB::commit();
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "Application had been modified.");
-			return redirect()->route('system.business_transaction.pending');
-		}catch(\Exception $e){
-			DB::rollback();
-			session()->flash('notification-status', "failed");
-			session()->flash('notification-msg', "Server Error: Code #{$e->getLine()}");
-			return redirect()->back();
-		}
-	}*/
 
 	public function process($id = NULL,PageRequest $request){
 		$d1 = new Carbon('01/20');
@@ -660,27 +552,6 @@ class BusinessTransactionController extends Controller
         Event::dispatch('send-digital-business-permit', $notification_data_email);
     }
 
-	public function save_collection (TransactionCollectionRequest $request){
-		$transaction_id = $request->get('transaction_id');
-		DB::beginTransaction();
-
-		try{
-			$business_transaction = BusinessTransaction::find($transaction_id);
-			$business_transaction->collection_id = $request->get('collection_id');
-			$business_transaction->save();
-
-			DB::commit();
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "Collection Breakdown has been saved.");
-			return redirect()->route('system.business_transaction.show',[$transaction_id]);
-		}catch(\Exception $e){
-			DB::rollback();
-			session()->flash('notification-status', "failed");
-			session()->flash('notification-msg', "Server Error: Code #{$e->getLine()}");
-			return redirect()->back();
-		}
-	}
-
 	public function remarks($id = NULL,PageRequest $request){
 		DB::beginTransaction();
 			$transaction = $request->get('business_transaction_data');
@@ -726,11 +597,24 @@ class BusinessTransactionController extends Controller
 		    $it_2 = json_decode($transaction->department_id, TRUE);
 		    $result_array = array_diff($it_1,$it_2);
 
+		    $insert_data[] = [
+                'email' => $transaction->owner->email,
+                'full_name' => $transaction->owner->full_name,
+                'department_name' => $auth->department->name,
+                'application_name' => $transaction->application_name,
+                'remarks' => $value,
+                'created_at' => Carbon::now(),
+            ];
+
+			$application_data = new SendEmailRemarks($insert_data);
+		    Event::dispatch('send-email-remarks', $application_data);
+
 		    if(empty($result_array)){
 		    	$transaction->for_bplo_approval = 1;
 		    	$transaction->bplo_approved_at = Carbon::now();
 		    	$transaction->save();
 		    }
+
 
 			DB::commit();
 			session()->flash('notification-status', "success");
@@ -753,20 +637,29 @@ class BusinessTransactionController extends Controller
 			if ($status_type == 'validate'){
 				$transaction->is_validated = 1;
 				$transaction->validated_at = Carbon::now();
-				$dept_code_array = explode(",", $request->get('department_code'));
 
-				foreach ($dept_code_array as $data) {
-					$department = Department::where('code',$data)->first();
-					if (!$department) {
-						session()->flash('notification-status', "failed");
-						session()->flash('notification-msg', "No Department Found.");
-						return redirect()->route('system.business_transaction.show',[$id]);
-					}
+				$department_id = Department::all();
+
+				if (!$department_id) {
+					session()->flash('notification-status', "failed");
+					session()->flash('notification-msg', "No Department Found.");
+					return redirect()->route('system.business_transaction.show',[$id]);
 				}
+				$dept_array = [];
 
-				$transaction->department_involved = json_encode(explode(",",$request->get('department_code')));
+				foreach ($department_id as $data) {
+					array_push($dept_array, $data->code);
+				}
+				$transaction->department_involved = json_encode($dept_array);
 
-				$department = User::whereIn('department_id', explode(",",$request->get('department_code')))->get();
+				$department = User::whereIn('department_id', $dept_array)->get();
+
+				if (count($department) == 0) {
+					session()->flash('notification-status', "failed");
+					session()->flash('notification-msg', "No Processor Found.");
+					return redirect()->route('system.business_transaction.show',[$id]);
+				}
+				
 				$insert = [];
 				foreach ($department as $departments ) {
 					$insert[] = [
@@ -776,16 +669,17 @@ class BusinessTransactionController extends Controller
 						'application_no' => $transaction->application_permit->application_no,
 					];
 				}
-				// Send via SMS
-				//$notification_data = new NotifyDepartmentSMS($insert);
-				//Event::dispatch('notify-departments-sms', $notification_data);
-
 				// send via Email
 				$notification_data = new NotifyDepartmentEmail($insert);
 				Event::dispatch('notify-departments-email', $notification_data);
 
+				// Send via SMS
+				//$notification_data = new NotifyDepartmentSMS($insert);
+				//Event::dispatch('notify-departments-sms', $notification_data);
+
 				session()->flash('notification-status', "success");
-				session()->flash('notification-msg', "Office Code has been saved.");
+				session()->flash('notification-msg', "Transaction has been successfully validated.");
+
 			} else {
 				$transaction->status = "DECLINED";
 				$transaction->application_permit->status =  "declined";
@@ -826,6 +720,13 @@ class BusinessTransactionController extends Controller
 		$this->data['transaction'] = BusinessTransaction::find($id);
 		$this->data['business_fees'] = Assessment::where('transaction_id',$id)->get();
 
+		$existing_assessment = Assessment::where('transaction_id' , $id)->where('department_id', $auth->department_id)->first();
+		if($existing_assessment){
+			session()->flash('notification-status', "warning");
+			session()->flash('notification-msg', "Assesment already existing for this department.");
+			return redirect()->route('system.business_transaction.show',$id);
+		}
+
 		return view('system.business-transaction.assessment',$this->data);
 	}
 
@@ -837,10 +738,12 @@ class BusinessTransactionController extends Controller
 			$auth = Auth::user();
 			$this->data['transaction'] = BusinessTransaction::find($id);
 
+			
 			$new_assessment = new Assessment();
 			$new_assessment->transaction_id = $id;
 			$new_assessment->department_id = Auth::user()->department_id;
 			$new_assessment->cedula = $request->get('cedula');
+			$new_assessment->bfp_fee = $request->get('bfp_fee');
 			$new_assessment->brgy_fee = $request->get('brgy_fee');
 			$new_assessment->total_amount = $request->get('total_amount');
 
@@ -851,12 +754,12 @@ class BusinessTransactionController extends Controller
 				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
 					$type = 'file';
 					$original_filename = $request->file('file')->getClientOriginalName();
-					$upload_image = FileUploader::upload($image, 'uploads/transaction/assessment/{$id}');
+					$upload_image = FileUploader::upload($image, 'uploads/transaction/assessment/'.$id);
 				}
 				if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
 					$type = 'image';
 					$original_filename = $request->file('file')->getClientOriginalName();
-					$upload_image = ImageUploader::upload($image, 'uploads/transaction/assessment/{$id}');
+					$upload_image = ImageUploader::upload($image, 'uploads/transaction/assessment/'.$id);
 				}
 				$new_assessment->path = $upload_image['path'];
 				$new_assessment->directory = $upload_image['directory'];
@@ -877,61 +780,6 @@ class BusinessTransactionController extends Controller
 			return redirect()->back();
 		}
 
-	}
-
-	public function approved_assessment(PageRequest $request , $id = NULL){
-		DB::beginTransaction();
-		try{
-			$auth = Auth::user();
-			$regulatory_fee = BusinessFee::find($id);
-			if (!$regulatory_fee->amount) {
-				session()->flash('notification-status', "failed");
-				session()->flash('notification-msg', "No Amount Found");
-				return redirect()->back();
-			}
-			$regulatory_fee->status = "APPROVED";
-			$regulatory_fee->save();
-			DB::commit();
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "Assesment has been successfully approved.");
-			return redirect()->route('system.business_transaction.assessment',$regulatory_fee->transaction_id);
-		}catch(\Exception $e){
-			DB::rollback();
-			session()->flash('notification-status', "failed");
-			session()->flash('notification-msg', "Server Error: Code #{$e->getLine()}");
-			return redirect()->back();
-		}
-	}
-
-	public function update_department(PageRequest $request , $id = NULL){
-		DB::beginTransaction();
-		try{
-			$dept_code_array = explode(",", $request->get('department_code'));
-
-			foreach ($dept_code_array as $data) {
-				$department = Department::where('code',$data)->first();
-				if (!$department) {
-					session()->flash('notification-status', "failed");
-					session()->flash('notification-msg', "No Department Found.");
-					return redirect()->route('system.business_transaction.show',[$id]);
-				}
-			}
-
-			$transaction = $request->get('business_transaction_data');
-			$transaction->department_involved = json_encode(explode(",",$request->get('department_code')));
-			$transaction->save();
-
-			DB::commit();
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "Office Code has been updated.");
-			return redirect()->route('system.business_transaction.show',[$id]);
-
-		}catch(\Exception $e){
-			DB::rollback();
-			session()->flash('notification-status', "failed");
-			session()->flash('notification-msg', "Server Error: Code #{$e->getLine()}");
-			return redirect()->back();
-		}
 	}
 
 	public function release(PageRequest $request , $id = NULL){
@@ -984,136 +832,6 @@ class BusinessTransactionController extends Controller
         }
     }
 
-    public function bulk_assessment(PageRequest $request){
-    	DB::beginTransaction();
-    	try{
-	    	$business_id = [];
-	    	$transaction_id = [];
-
-	    	foreach (explode(",", $request->get('application_no')) as $key => $value) {
-	    		$app = ApplicationBusinessPermit::where('application_no', $value)->first();
-	    		array_push($business_id, $app->business_id);
-	    	}
-
-	    	foreach ($business_id as $key => $value) {
-				$transaction = BusinessTransaction::where('business_id', $value)->where('status',"PENDING")->first();
-	    		array_push($transaction_id, $transaction->id);
-			}
-
-			foreach ($transaction_id as $key => $value) {
-				$this->data['transaction'] = BusinessTransaction::find($value);
-				$this->data['business'] = Business::find($this->data['transaction']->business_id);
-				$request_body = [
-					'business_id' => $this->data['business']->business_id_no,
-					'ebriu_application_no' => $this->data['transaction']->application_permit->application_no,
-					'year' => "2021",
-					'office_code' => "99",
-				];
-
-				$response = Curl::to(env('ZAMBOANGA_URL'))
-				         ->withData($request_body)
-				         ->asJson( true )
-				         ->returnResponseObject()
-						 ->post();
-				/*if ($response->content['data'] == NULL) {
-					session()->flash('notification-status', "failed");
-					session()->flash('notification-msg', "No Assesment Found.");
-					return redirect()->route('system.business_transaction.pending');
-				}*/
-
-				$regulatory_array = [];
-				$business_array = [];
-				$garbage_array = [];
-
-				foreach ($response->content['data'] as $key => $value) {
-					if ($value['FeeType'] == 0 ) {
-						array_push($regulatory_array, $value);
-					}
-					if ($value['FeeType'] == 1 ) {
-						array_push($business_array, $value);
-					}
-					if ($value['FeeType'] == 2) {
-						array_push($garbage_array, $value);
-					}
-				}
-				if (count($regulatory_array) > 0) {
-					$total_amount = 0 ;
-					foreach ($regulatory_array as $key => $value) {
-						$total_amount += Helper::db_amount($value['Amount']);
-					}
-					$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 0)->first();
-					if ($existing) {
-						$existing->delete();
-					}
-					$new_business_fee = new BusinessFee();
-					$new_business_fee->business_id = $this->data['transaction']->business_id;
-					$new_business_fee->transaction_id =$this->data['transaction']->id;
-					$new_business_fee->collection_of_fees = json_encode($regulatory_array);
-					$new_business_fee->amount = Helper::db_amount($total_amount);
-					$new_business_fee->status = "APPROVED";
-					$new_business_fee->office_code = "99";
-					$new_business_fee->fee_type = 0;
-					$new_business_fee->save();
-
-				}
-
-				if (count($business_array) > 0) {
-					$total_amount = 0 ;
-					foreach ($business_array as $key => $value) {
-						$total_amount += Helper::db_amount($value['Amount']);
-					}
-					$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 1)->first();
-					if ($existing) {
-						$existing->delete();
-					}
-					$new_business_fee = new BusinessFee();
-					$new_business_fee->business_id = $this->data['transaction']->business_id;
-					$new_business_fee->transaction_id =$this->data['transaction']->id;
-					$new_business_fee->collection_of_fees = json_encode($business_array);
-					$new_business_fee->amount = Helper::db_amount($total_amount);
-					$new_business_fee->status = "APPROVED";
-					$new_business_fee->office_code = "99";
-					$new_business_fee->fee_type = 1;
-					$new_business_fee->save();
-
-
-				}
-
-				if (count($garbage_array) > 0) {
-					$total_amount = 0 ;
-					foreach ($garbage_array as $key => $value) {
-						$total_amount += Helper::db_amount($value['Amount']);
-					}
-					$existing = BusinessFee::where('transaction_id' ,$this->data['transaction']->id)->where('fee_type' , 2)->first();
-					if ($existing) {
-						$existing->delete();
-					}
-					$new_business_fee = new BusinessFee();
-					$new_business_fee->business_id = $this->data['transaction']->business_id;
-					$new_business_fee->transaction_id =$this->data['transaction']->id;
-					$new_business_fee->collection_of_fees = json_encode($garbage_array);
-					$new_business_fee->amount = Helper::db_amount($total_amount);
-					$new_business_fee->status = "APPROVED";
-					$new_business_fee->office_code = "99";
-					$new_business_fee->fee_type = 2;
-					$new_business_fee->save();
-
-
-				}
-			}
-			DB::commit();
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "successfully get assessment");
-			return redirect()->route('system.business_transaction.pending');
-
-		}catch(\Throwable $e){
-            DB::rollback();
-			session()->flash('notification-status', "failed");
-			session()->flash('notification-msg', "Server Error: Code #{$e->getLine()}");
-			return redirect()->back();
-        }
-    }
-
     public function bulk_decline(PageRequest $request){
     	DB::beginTransaction();
     	try{
@@ -1162,55 +880,5 @@ class BusinessTransactionController extends Controller
         }
     }
 
-    public function bulk_update(PageRequest $request){
-	    	$business = Business::where('corporation_name',NULL)->where('owner_fname' , NULL)->take(100)->get();
-	    	foreach ($business as $key => $value) {
-	    		$request_body = [
-	                'business_id' => $value->business_id_no,
-	            ];
-	            $response = Curl::to(env('OBOSS_BUSINESS_PROFILE'))
-	                         ->withData($request_body)
-	                         ->asJson( true )
-	                         ->returnResponseObject()
-	                         ->post();
-	            if($response->status == "200"){
-	                $content = $response->content;
-	                $this->data['business'] = $response->content['data'];
-	                switch ($value->business_type) {
-	                    case 'sole_proprietorship':
-	                    	if ($value->owner_fname == NULL) {
-	                    		Business::where('id',$value->id)->update(['owner_fname' => $this->data['business']['FirstName'] ?: NULL ,'owner_lname' => $this->data['business']['LastName'] ?: NULL ,'owner_mname' => $this->data['business']['MiddleName'] ?: NULL]);
-	                    	}
-	                        break;
-	                    case 'partnership':
-	                    	if ($value->corporation_name == NULL) {
-	                    		Business::where('id',$value->id)->update(['corporation_name' => $this->data['business']['Owner'] ?: NULL ]);
-	                    	}
-	                    	break;
-	                    case 'corporation':
-	                    	if ($value->corporation_name == NULL) {
-	                    		Business::where('id',$value->id)->update(['corporation_name' => $this->data['business']['Owner'] ?: NULL ]);
-	                    	}
-	                    	break;
-	                    case 'cooperative':
-	                    	if ($value->corporation_name == NULL) {
-	                    		Business::where('id',$value->id)->update(['corporation_name' => $this->data['business']['Owner'] ?: NULL ]);
-	                    	}
-	                    	break;
-	                    case 'association':
-	                    	if ($value->corporation_name == NULL) {
-	                    		Business::where('id',$value->id)->update(['corporation_name' => $this->data['business']['Owner'] ?: NULL ]);
-	                    	}
-	                    	break;
-	                    default:
-	                        break;
-	                }
-	            }
-
-	    	}
-			session()->flash('notification-status', "success");
-			session()->flash('notification-msg', "successfully update transactions");
-			return redirect()->route('system.business_transaction.pending');
-
-    }
+  
 }

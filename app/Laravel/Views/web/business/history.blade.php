@@ -19,10 +19,11 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th class="text-title fs-500 ">Application Date</th>
-                                        <th class="text-title  fs-500 ">Application Type</th>
-                                        <th class="text-title  fs-500 ">Application No.</th>
-                                        <th class="text-title  fs-500 ">Amount/Status</th>
-                                        <th class="text-title  fs-500 ">Processor/Status</th>
+                                        <th class="text-title fs-500 ">Application Type</th>
+                                        <th class="text-title fs-500 ">Application No.</th>
+                                        <th class="text-title fs-500 ">Amount/Status</th>
+                                        <th class="text-title fs-500 ">Processor/Status</th>
+                                        <th class="text-title fs-500">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,7 +32,7 @@
                                             <td>{{$history->created_at}}</td>
                                             <td>{{$history->application_name}} <br> {{$history->code}}</td>
                                             <td>{{$history->application_permit->application_no}}</td>
-                                            <td>{{$history->total_amount}}<br>
+                                            <td>{{$history->total_amount}}
                                                 <div>
                                                     <span class="badge badge-pill badge-{{Helper::status_badge($history->payment_status)}} p-2">{{Str::upper($history->payment_status)}}</span>
                                                 </div>
@@ -43,6 +44,13 @@
                                                 @if($history->status == 'APPROVED')
                                                     <div class="mt-1"><p>{{ $history->admin ? $history->admin->full_name : '---' }}</p></div>
                                                 @endif
+                                          </td>
+                                          <td>
+                                               <button type="button" class="btn btn-sm p-0 business-action" data-toggle="dropdown" style="background-color: transparent;"> <i class="mdi mdi-dots-horizontal" style="font-size: 30px"></i></button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
+                                                    <a class="dropdown-item" href="{{route('web.business.download',[$history->id])}}">Download</a>
+                                                    
+                                                </div>
                                           </td>
                                         </tr>
                                     @empty
@@ -63,6 +71,15 @@
 
 
 @stop
+@section('page-styles')
+<style type="text/css">
+    
+    .business-action{
+        background-color: transparent;
+        border:none;
+    }
+</style>
+@endsection
 
 @section('page-scripts')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

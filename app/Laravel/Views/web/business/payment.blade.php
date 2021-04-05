@@ -30,6 +30,7 @@
                       <th class="text-title p-3">Assessment File</th>
                       <th class="text-title p-3">Cedula</th>
                       <th class="text-title p-3">Barangay Fee</th>
+                      <th class="text-title p-3">BFP Fee</th>
                       <th class="text-title p-3">Total Amount</th>
                     </tr>
                   </thead>
@@ -38,9 +39,10 @@
                       <tr>
                          <td>{{str::title($value->department->name)}}</td>
                          <td><a href="{{$value->directory}}/{{$value->filename}}" target="_blank">{{$value->original_name}}</a></td>
-                         <td>{{Helper::money_format($value->cedula)}}</td>
-                         <td>{{Helper::money_format($value->brgy_fee)}}</td>
-                         <td>{{Helper::money_format($value->total_amount)}}</td>
+                         <td>{{Helper::money_format($value->cedula) ?: "N/A"}}</td>
+                         <td>{{Helper::money_format($value->brgy_fee) ?: "N/A"}}</td>
+                         <td>{{Helper::money_format($value->bfp_fee) ?: "N/A"}}</td>
+                         <td>{{Helper::money_format($value->total_amount) ?: "N/A"}}</td>
                       </tr>
                     @empty
                       <tr>
@@ -49,6 +51,9 @@
                     @endforelse
                   </tbody>
                 </table>
+                @if($assessments)
+                  <p class="text-title float-right p-3 fw-600">Total Amount: {{Helper::money_format($total_amount)}}</p>
+                @endif
               </div>
             </div>
         </div>

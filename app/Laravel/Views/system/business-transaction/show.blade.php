@@ -59,7 +59,7 @@
                 <p class="text-title fw-500">Dominant Name: <span class="text-black">{{str::title($transaction->business_info->dominant_name)}}</span></p>
                 <p class="text-title fw-500">DTI/SEC/CDA registration No.: <span class="text-black">{{$transaction->business_info->dti_sec_cda_registration_no ?: "-"}}</span></p>
                 <p class="text-title fw-500">Cedula Number: <span class="text-black">{{str::title($transaction->business_info->ctc_no)}}</span></p>
-                <p class="text-title fw-500">Business Type: <span class="text-black">{{str::title($transaction->business_info->business_type)}}</span></p>
+                <p class="text-title fw-500">Business Type: <span class="text-black">{{str::title(str_replace("_"," " , $transaction->business_info->business_type))}}</span></p>
                 <p class="text-title fw-500">Business Scope: <span class="text-black">{{str::title($transaction->business_info->business_scope)}}</span></p>
                 <p class="text-title fw-500">Business Mobile No.: <span class="text-black"> +63{{$transaction->business_info->mobile_no}}</span></p>
                 <p class="text-title fw-500">Business Tel No.: <span class="text-black"> {{$transaction->business_info->telephone_no}}</span></p>
@@ -76,13 +76,15 @@
             <p class="text-title fw-500 mt-3">Line of Business :</p>
             <table class="table table-bordered">
               <tr>
-                <th>Particulars</th>
+                <th>Line Of Business</th>
+                <th>No of Units</th>
                 <th>Gross Sales/ Capitalization</th>
                </tr>
                 <tbody>
                     @forelse ($business_line as $item)
                     <tr>
                         <td>{{ $item->line_of_business }}</td>
+                        <td>{{ $item->no_of_unit }}</td>
                         <td>{{ number_format($item->gross_sales,2,'.','') > 0 ?  number_format($item->gross_sales,2) : number_format($item->capitalization,2)}}</td>
                     </tr>
                     @empty
@@ -214,13 +216,6 @@
             <div class="col-md-6 pt-2">
               <h5 class="text-title text-uppercase">Involved Departments</h5>
             </div>
-            <div class="col-md-6">
-            @if(in_array(Auth::user()->type , ["admin","super_user"]))
-              @if($transaction->department_remarks == NULL and $transaction->department_involved)
-                <a data-url="{{route('system.business_transaction.update_department',[$transaction->id])}}"  class="btn btn-primary btn-involved border-5 text-white float-right">Update Department</a>
-              @endif
-            @endif
-            </div>
             <div class="table-responsive pt-2">
               <table class="table table-bordered table-wrap" style="table-layout: fixed;">
                 <thead>
@@ -257,7 +252,7 @@
           </div>
           <div class="col-md-6">
             @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
+              @if(in_array(Auth::user()->department_id, json_decode($transaction->department_involved)))
               <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
               @endif
             @endif
@@ -270,6 +265,7 @@
                   <th class="text-title p-3">Assessment File</th>
                   <th class="text-title p-3">Cedula</th>
                   <th class="text-title p-3">Barangay Fee</th>
+                  <th class="text-title p-3">BFP Fee</th>
                   <th class="text-title p-3">Total Amount</th>
                 </tr>
               </thead>
@@ -280,6 +276,7 @@
                      <td><a href="{{$value->directory}}/{{$value->filename}}" target="_blank">{{$value->original_name}}</a></td>
                      <td>{{Helper::money_format($value->cedula)}}</td>
                      <td>{{Helper::money_format($value->brgy_fee)}}</td>
+                     <td>{{Helper::money_format($value->bfp_fee)}}</td>
                      <td>{{Helper::money_format($value->total_amount)}}</td>
                   </tr>
                 @empty
@@ -298,7 +295,7 @@
           </div>
           <div class="col-md-6">
             @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
+              @if(in_array(Auth::user()->department_id, json_decode($transaction->department_involved)))
                 <a data-url="{{route('system.business_transaction.remarks',[$transaction->id])}}"  class="btn btn-primary btn-remarks border-5 text-white float-right">Add Remarks</a>
               @endif
             @endif
@@ -482,26 +479,20 @@
     });
     $(".btn-validate").on('click', function(){
       var url = $(this).data('url');
-      var self = $(this)
+      var btn = $(this)
       Swal.fire({
-        title: 'Input Department Code',
-        text: 'Use comma(,) as separator',
-        content: '<span>test</span>',
-        icon: 'warning',
-        input: 'text',
-        inputPlaceholder: "E.g. 01,02,03,99",
+        title: 'Are you sure you want to validate this application?',
+        text: "You will not be able to undo this action, proceed?",
+        icon: 'info',
         showCancelButton: true,
-        confirmButtonText: 'Proceed',
+        confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
+        confirmButtonText: 'Proceed!'
       }).then((result) => {
-        if (result.value === "") {
-          alert("You need to write something")
-          return false
+        if (result.isConfirmed) {
+          window.location.href = url;
         }
-        if (result.value) {
-          window.location.href = url + "department_code="+result.value;
-        }
-      });
+      })
     });
 
     $(".btn-involved").on('click', function(){

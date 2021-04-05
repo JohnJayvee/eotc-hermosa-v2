@@ -11,9 +11,7 @@
         <div class="row">
             @include('web.business.business_sidebar')
             <div class="col-md-9">
-                <div class="row">
-                    @include('system._components.notifications')
-                </div>
+                @include('system._components.notifications')
                 <div class="card">
                     <div class="card-body" style="padding: 3em">
                         <div class="row mb-4">
@@ -22,10 +20,13 @@
                                     <a href="{{route('web.business.edit')}}" title=""><i class="fas fa-pencil-alt"></i></a>
                                 </h5>
                             </div>
-                            <div class="col-md-8 d-flex flex-row">
-                                <a data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}" class="custom-btn-danger btn-delete btn-danger text-white ml-auto mr-2" >Delete Business CV</a>
-                                <a href="{{route('web.business.history',[$profile->id])}}" class="custom-btn badge-primary-2 text-white mr-2" >Application History</a>
-                                <a href="{{route('web.business_payment.index',[$profile->id])}}" class="mr-2 custom-btn badge-primary-2 text-white">Business Payment</a>
+                            <div class="col-md-8">
+                                <button type="button" class="btn btn-sm p-0 business-action" data-toggle="dropdown"> <i class="mdi mdi-dots-horizontal" style="font-size: 30px"></i></button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
+                                    <a class="dropdown-item" href="{{route('web.business.history',[$profile->id])}}">Application History</a>
+                                    <a class="dropdown-item" href="{{route('web.business_payment.index',[$profile->id])}}">Business Payment</a>
+                                    <a class="dropdown-item action-delete" data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}">Delete Business CV</a>
+                                </div>
                             </div>
                         </div>
                         <div class="row underline mb-2">
@@ -33,11 +34,11 @@
                                 <label class="text-uppercase">{{str_replace("_"," ",$profile->business_type)}}</label>
                                 <p>Business Type</p>
                             </div>
-                             <div class="col-md-3">
+                             <div class="col-md-">
                                 <label class="text-uppercase">{{str_replace("_"," ",$profile->business_scope)}}</label>
                                 <p>Business Scope</p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="text-uppercase">{{$profile->dti_sec_cda_registration_no}}</label>
                                 <p>DTI/SEC/CDA registration No</p>
                             </div>
@@ -352,7 +353,7 @@
 
                 </div>
                 <a  href="{{route('web.business.index')}}" class="btn badge-default-2 mt-2" style="float: right;">Return to Dashboard</a>
-                <a data-ready="{{ $profile->renewal_ready['flag'] ? 'true' : 'false' }}" data-info="{{  $profile->renewal_ready['last_data'] }}" data-url="{{route('web.business.application.create')}}"  class="btn btn-renew badge-primary-2 mt-2 text-white">Submit For Renewal</a>
+                <a data-ready="{{ $profile->renewal_ready['flag'] ? 'true' : 'false' }}" data-info="{{  $profile->renewal_ready['last_data'] }}" data-url="{{route('web.business.application.create')}}"  class="btn btn-renew badge-primary-2 mt-2 text-white" href="#">Submit For Renewal</a>
 
             </div>
         </div>
@@ -369,6 +370,11 @@
 <style type="text/css">
     .underline {
         border-bottom: solid 1px;
+    }
+    .business-action{
+        background-color: transparent;
+        border:none;
+        float: right;
     }
 </style>
 @endsection

@@ -163,20 +163,20 @@ class BusinessPermitController extends Controller{
             //];
 
             $bplo = User::where('type', 'admin')->first();
-
-            $insert_department[] = [
-                'email' => $bplo->email,
-                'contact_number' => $bplo->contact_number,
-                'business_owner' => Auth::guard('customer')->user()->name,
-                'application_no' => $request->application_no,
-            ];
+            if($bplo){
+                $insert_department[] = [
+                    'email' => $bplo->email,
+                    'contact_number' => $bplo->contact_number,
+                    'business_owner' => Auth::guard('customer')->user()->name,
+                    'application_no' => $request->application_no,
+                ];
             
-            //$line_of_business_data = new UploadLineOfBusinessToLocal($request_body);
-            //Event::dispatch('upload-line-of-business-to-local', $line_of_business_data);
+                //$line_of_business_data = new UploadLineOfBusinessToLocal($request_body);
+                //Event::dispatch('upload-line-of-business-to-local', $line_of_business_data);
 
-            $notification_data = new SendBusinessPermitConfirmation($insert);
-            Event::dispatch('send-business-permit-assessment-confirmation', $notification_data);
-
+                $notification_data = new SendBusinessPermitConfirmation($insert);
+                Event::dispatch('send-business-permit-assessment-confirmation', $notification_data);
+            }
             // Send event to BPLO Admin
 
             // Send via SMS

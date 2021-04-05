@@ -65,7 +65,6 @@
     </form>
   </div>
   <div class="col-md-12">
-     <a data-url="{{route('system.business_transaction.bulk_assessment')}}"  class="btn btn-primary mb-2 mr-2 btn-assessment border-5 text-white float-right"> Bulk Assessment</a>
      @if(in_array(Auth::user()->type, ['admin', 'super_user']))
       <a data-url="{{route('system.business_transaction.bulk_decline')}}"  class="btn btn-primary mb-2 mr-2 btn-declined border-5 text-white float-right"> Bulk Decline</a>
      @endif

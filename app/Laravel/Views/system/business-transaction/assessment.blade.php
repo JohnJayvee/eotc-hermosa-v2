@@ -35,6 +35,15 @@
               <p class="mt-1 text-danger">{!!$errors->first('file')!!}</p>
               @endif
             </div>
+          @if(Auth::user()->department->code == "03")
+            <div class="form-group">
+              <label for="input_title">BFP Fee</label>
+              <input type="text" class="form-control {{$errors->first('bfp_fee') ? 'is-invalid' : NULL}}" id="input_title" name="bfp_fee" value="{{old('bfp_fee',strtoupper($transaction->application_permit->bfp_fee))}}">
+              @if($errors->first('bfp_fee'))
+              <p class="mt-1 text-danger">{!!$errors->first('bfp_fee')!!}</p>
+              @endif
+            </div>
+          @endif
           @if(Auth::user()->department->code == "99")
             <div class="form-group">
               <label for="input_title">Cedula</label>
@@ -67,55 +76,6 @@
   </div>
   
 </div>
-{{-- <div class="row">
-  <div class="col-md-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Assessment Details</h4>
-        <div class="table-responsive shadow-sm fs-15 mb-3">
-           <table class="table table-bordered table-wrap" style="table-layout: fixed;">
-            <thead>
-              <tr class="text-center">
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;"></th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Fee Type</th>
-                  <th class="text-title" rowspan="2" style="vertical-align: middle;">Status</th>
-                  <th class="text-title p-3" colspan="3">Breakdown</th>
-                </tr>
-                <tr class="text-center">
-                  <th class="text-title p-3">Office Code</th>
-                  <th class="text-title p-3">Account Name</th>
-                  <th class="text-title p-3">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-              @if($business_fees)
-              @foreach($business_fees as $business_fee)
-                <tr>
-                  <td rowspan="{{count(json_decode($business_fee->collection_of_fees)) + 1}}"><a href="{{route('system.business_transaction.approved_assessment',[$business_fee->id])}}" class="btn btn-primary btn-assessment">Approve</a></td>
-                  <td rowspan="{{count(json_decode($business_fee->collection_of_fees)) + 1}}">{{
-                    $business_fee->fee_type == 1 ? "Business Tax" : "Regulatory Fee"}}</td>
-                  <td rowspan="{{count(json_decode($business_fee->collection_of_fees)) + 1}}">{{$business_fee->status}}</td>
-                @foreach(json_decode($business_fee->collection_of_fees) as $collection)
-                  <tr>
-                    <td style="font-size: 12px">{{$collection->OfficeCode}}</td>
-                    <td style="font-size: 12px">{{$collection->BusinessID}}</td>
-                    <td style="font-size: 12px">{{$collection->Amount}}</td>
-                  </tr>
-                @endforeach
-              @endforeach
-              @else
-                <tr>
-                  <td colspan="2" class="tex-center">No Record Available</td>
-                </tr>
-              @endif
-            </tbody>
-          </table>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-</div> --}}
 @stop
 
 @section('page-styles')

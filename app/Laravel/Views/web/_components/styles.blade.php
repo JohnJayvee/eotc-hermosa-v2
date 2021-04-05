@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="{{asset('web/css/style.css')}}">
 <link rel="stylesheet" href="{{asset('web/css/responsive.css')}}">
 <link rel="stylesheet" href="{{asset('web/css/site.css?v=1.02')}}">
+<link rel="stylesheet" href="{{asset('system/vendors/mdi/css/materialdesignicons.min.css')}}">
 
 <style type="text/css">
     .bg-transparent.affix {background: rgba(29,29,31,0.72)!important;

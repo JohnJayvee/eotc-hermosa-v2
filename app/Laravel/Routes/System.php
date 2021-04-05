@@ -52,23 +52,18 @@ Route::group(['as' => "auth."], function(){
 			Route::get('resent',['as' => "resent",'uses' => "BusinessTransactionController@resent"]);
 			Route::get('show/{id?}',['as' => "show",'uses' => "BusinessTransactionController@show",'middleware' => "system.exist:business_transaction"]);
 			Route::get('edit/{id?}',['as' => "edit",'uses' => "BusinessTransactionController@edit",'middleware' => "system.exist:business_transaction"]);
-			Route::post('update/{id?}',['as' => "update",'uses' => "BusinessTransactionController@update",'middleware' => "system.exist:business_transaction"]);
+			Route::post('edit/{id?}',['uses' => "BusinessTransactionController@update",'middleware' => "system.exist:business_transaction"]);
 			Route::get('process/{id?}',['as' => "process",'uses' => "BusinessTransactionController@process",'middleware' => "system.exist:business_transaction"]);
 			/*Route::post('bplo-approved/{id?}',['as' => "bplo_approved",'uses' => "BusinessTransactionController@bplo_approved"]);*/
-			Route::post('save-collection',['as' => "save_collection",'uses' => "BusinessTransactionController@save_collection"]);
 			Route::any('delete/{id?}',['as' => "destroy",'uses' => "BusinessTransactionController@destroy"]);
 			Route::get('remarks/{id?}',['as' => "remarks",'uses' => "BusinessTransactionController@remarks",'middleware' => "system.exist:business_transaction"]);
 			Route::get('validate/{id?}',['as' => "validate",'uses' => "BusinessTransactionController@bplo_validate",'middleware' => "system.exist:business_transaction"]);
 			Route::get('assessment/{id?}',['as' => "assessment",'uses' => "BusinessTransactionController@assessment"]);
 			Route::post('assessment/{id?}',['uses' => "BusinessTransactionController@get_assessment"]);
-			Route::get('approved-assessment/{id?}',['as' => "approved_assessment",'uses' => "BusinessTransactionController@approved_assessment"]);
             Route::get('certificate/{id?}',['as' => "digital_cerficate",'uses' => "BusinessTransactionController@digital_cerficate"]);
-			Route::get('update-department/{id?}',['as' => "update_department",'uses' => "BusinessTransactionController@update_department",'middleware' => "system.exist:business_transaction"]);
 			Route::get('release/{id?}',['as' => "release",'uses' => "BusinessTransactionController@release",'middleware' => "system.exist:business_transaction"]);
 			Route::get('read-all-notifs',['as' => "read_all_notifs",'uses' => "BusinessTransactionController@read_all_notifs"]);
-			Route::get('bulk-assessment',['as' => "bulk_assessment",'uses' => "BusinessTransactionController@bulk_assessment"]);
 			Route::get('bulk-decline',['as' => "bulk_decline",'uses' => "BusinessTransactionController@bulk_decline"]);
-			Route::get('bulk-update',['as' => "bulk_update",'uses' => "BusinessTransactionController@bulk_update"]);
 
 		});
 

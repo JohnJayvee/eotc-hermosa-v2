@@ -18,16 +18,21 @@ class TransactionUpdateRequest extends RequestManager{
 			'business_info.business_type' => "required",
 			'business_info.business_scope' => "required",
 			'business_info.mobile_no' => "required",
-			'business_info.unit_no' => "required",
-			'business_info.street_address' => "required",
-			'business_info.brgy' => "required",
 			'business_info.no_of_male_employee' => "required",
 			'business_info.no_of_female_employee' => "required",
 			'business_info.female_residing_in_city' => "required",
 			'business_info.male_residing_in_city' => "required",
 			'business_info.business_area' => "required",
 			'business_info.capitalization' => "required",
+			'business_info.location' => "required",
+
 		];
+
+		foreach(range(1,count($this->get('line_of_business'))) as $index => $value){
+          $rules["line_of_business.{$index}"] = "required";
+          $rules["amount.{$index}"] = "required";
+
+    	}
 
 		return $rules;
 	}
