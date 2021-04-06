@@ -296,7 +296,7 @@
           </div>
           <div class="col-md-6">
             @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department_id, json_decode($transaction->department_involved)))
+              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
                 <a data-url="{{route('system.business_transaction.remarks',[$transaction->id])}}"  class="btn btn-primary btn-remarks border-5 text-white float-right">Add Remarks</a>
               @endif
             @endif
