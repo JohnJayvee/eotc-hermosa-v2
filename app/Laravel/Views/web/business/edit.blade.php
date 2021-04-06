@@ -202,6 +202,22 @@
                                         @endif
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="" class="text-form pb-2 col-md-6">Does your establishment has a septic tank or connected to a septic tank?</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="yes" style="width: 30px; height: 30px;">
+                                            <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="no" style="width: 30px; height: 30px;">
+                                            <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
+                                        </div>
+                                        @if($errors->first('has_septic_tank'))
+                                            <small class="form-text pl-3" style="color:red;">{{$errors->first('has_septic_tank')}}</small>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
@@ -831,6 +847,10 @@
     }
 
     $(function () {
+        $('input[name="has_septic_tank"]').on('change', function () {
+            $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+        });
+
         $('#buttonID').click(function(){
             alert('click');
         })

@@ -30,6 +30,8 @@ class BusinessRequest extends RequestManager{
                   "location" => "required",
                   "email" => "required|email:rfc,dns",
                   "mobile_no" => "required|max:10|phone:PH",
+                  "has_septic_tank" => "required",
+
                   // "tax_incentive" => "required",
                   //"rep_lastname" => "required",
                   //"rep_firstname" => "required",

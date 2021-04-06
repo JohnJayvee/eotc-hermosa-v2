@@ -177,21 +177,6 @@
                                             <input class="form-control form-control-sm" type="checkbox" name="checkbox" value="yes" style="width: 30px; height: 30px;">
                                             <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
                                         </div>
-                                        <script>
-                                            $(function(){
-                                                $('input[name="checkbox"]').on('change', function () {
-                                                    $('input[name="checkbox"]').not(this).prop('checked', false);
-                                                    if($(this).val() == 'yes'){
-                                                        $('input[name="tax_incentive"]').val('');
-                                                        $('#checkYes').show();
-                                                    }
-                                                    if($(this).val() == 'no'){
-                                                        $('#checkYes').hide();
-                                                        $('input[name="tax_incentive"]').val('no');
-                                                    }
-                                                });
-                                            })
-                                        </script>
                                         <div class="form-check form-check-inline">
                                             <input class="form-control form-control-sm" type="checkbox" name="checkbox" value="no" style="width: 30px; height: 30px;">
                                             <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
@@ -264,6 +249,22 @@
                                         <input type="number" class="form-control form-control-sm {{ $errors->first('capitalization') ? 'is-invalid': NULL  }}"  name="capitalization" value="{{old('capitalization') }}" autocomplete="off">
                                         @if($errors->first('capitalization'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('capitalization')}}</small>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="" class="text-form pb-2 col-md-6">Does your establishment has a septic tank or connected to a septic tank?</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="yes" style="width: 30px; height: 30px;">
+                                            <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="no" style="width: 30px; height: 30px;">
+                                            <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
+                                        </div>
+                                        @if($errors->first('has_septic_tank'))
+                                            <small class="form-text pl-3" style="color:red;">{{$errors->first('has_septic_tank')}}</small>
                                         @endif
                                     </div>
                                 </div>
@@ -796,9 +797,107 @@
 <script src="{{asset('system/vendors/locationpicker/locationpicker.jquery.js')}}" type="text/javascript"></script>
 <script src="http://maps.google.com/maps/api/js?sensor=true&v=3&libraries=places&key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
 <script type="text/javascript">
+
+$.fn.get_region = function (input_region, input_province, input_city, input_brgy, selected) {
+
+    $(input_city).empty().prop('disabled', true)
+    $(input_brgy).empty().prop('disabled', true)
+
+    $(input_region).append($('<option>', {
+        value: "",
+        text: "Loading Content..."
+    }));
+    $.getJSON("{{env('PSGC_REGION_URL')}}", function (response) {
+        $(input_region).empty().prop('disabled', true)
+        $.each(response.data, function (index, value) {
+            $(input_region).append($('<option>', {
+                value: index,
+                text: value
+            }));
+        })
+
+        $(input_region).prop('disabled', true)
+        $(input_region).prepend($('<option>', {
+            value: "",
+            text: "--Select Region--"
+        }))
+        if (selected.length > 0) {
+            $(input_region).val($(input_region + " option[value=" + selected + "]").val());
+        } else {
+            $(input_region).val($(input_region + " option:first").val());
+        }
+    });
+    // return result;
+};
+
+$.fn.get_city = function (reg_code, input_city, input_brgy, selected) {
+    $(input_brgy).empty().prop('disabled', true)
+    $(input_city).append($('<option>', {
+        value: "",
+        text: "Loading Content..."
+    }));
+    $.getJSON("{{env('PSGC_CITY_URL')}}?region_code=" + reg_code, function (data) {
+        console.log(data)
+        $(input_city).empty().prop('disabled', true)
+        $.each(data, function (index, value) {
+            $(input_city).append($('<option>', {
+                value: index,
+                text: value
+            }));
+        })
+
+        $(input_city).prop('disabled', true)
+        $(input_city).prepend($('<option>', {
+            value: "",
+            text: "--SELECT MUNICIPALITY/CITY, PROVINCE--"
+        }))
+        if (selected.length > 0) {
+            $(input_city).val($(input_city + " option[value=" + selected + "]").val());
+        } else {
+            $(input_city).val($(input_city + " option:first").val());
+        }
+    });
+    // return result;
+};
+
+$.fn.get_brgy = function (munc_code, input_brgy, selected) {
+    $(input_brgy).empty().prop('disabled', true);
+    $(input_brgy).append($('<option>', {
+        value: "",
+        text: "Loading Content..."
+    }));
+    $.getJSON("{{env('PSGC_BRGY_URL')}}?city_code=" + munc_code, function (data) {
+        $(input_brgy).empty().prop('disabled', true);
+
+        $.each(data, function (index, value) {
+            $(input_brgy).append($('<option>', {
+                value: index,
+                text: value.desc,
+                "data-zip_code": (value.zip_code).trim()
+            }));
+        })
+        $(input_brgy).prop('disabled', false)
+        $(input_brgy).prepend($('<option>', {
+            value: "",
+            text: "--SELECT BARANGAY--"
+        }))
+
+        if (selected.length > 0) {
+            $(input_brgy).val($(input_brgy + " option[value=" + selected + "]").val());
+
+            if (typeof $(input_brgy + " option[value=" + selected + "]").data('zip_code') === undefined) {
+                $(input_brgy.replace("brgy", "zipcode")).val("")
+            } else {
+                $(input_brgy.replace("brgy", "zipcode")).val($(input_brgy + " option[value=" + selected + "]").data('zip_code'))
+            }
+
+        } else {
+            $(input_brgy).val($(input_brgy + " option:first").val());
+        }
+    });
+}
     
 $(function(){
-
     $('#map-address').on('click',function(){
         $(this).val('');
     })
@@ -837,210 +936,121 @@ $(function(){
           updateControls(addressComponents);
         }
     });
-});
-    $.fn.get_region = function (input_region, input_province, input_city, input_brgy, selected) {
 
-        $(input_city).empty().prop('disabled', true)
-        $(input_brgy).empty().prop('disabled', true)
+    $('.create-form').on('submit', function() {
+        $('#input_business_type').prop('disabled', false);
+    });
 
-        $(input_region).append($('<option>', {
-            value: "",
-            text: "Loading Content..."
-        }));
-        $.getJSON("{{env('PSGC_REGION_URL')}}", function (response) {
-            $(input_region).empty().prop('disabled', true)
-            $.each(response.data, function (index, value) {
-                $(input_region).append($('<option>', {
-                    value: index,
-                    text: value
-                }));
-            })
+    load_barangay();
+    $(this).get_region("#input_region", "#input_province", "#input_town", "#input_brgy", "{{old('region', '030000000')}}")
+    $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030803000')}}");
 
-            $(input_region).prop('disabled', true)
-            $(input_region).prepend($('<option>', {
-                value: "",
-                text: "--Select Region--"
-            }))
-            if (selected.length > 0) {
-                $(input_region).val($(input_region + " option[value=" + selected + "]").val());
-            } else {
-                $(input_region).val($(input_region + " option:first").val());
-            }
-        });
-        // return result;
-    };
+    $("#input_region").on("change", function () {
+        var _val = $(this).val();
+        var _text = $("#input_region option:selected").text();
+        $(this).get_city($("#input_region").val(), "#input_town", "#input_brgy", "{{old('town')}}");
+        $('#input_zipcode').val('');
+        $('#input_region_name').val(_text);
+    });
 
-    $.fn.get_city = function (reg_code, input_city, input_brgy, selected) {
-        $(input_brgy).empty().prop('disabled', true)
-        $(input_city).append($('<option>', {
-            value: "",
-            text: "Loading Content..."
-        }));
-        $.getJSON("{{env('PSGC_CITY_URL')}}?region_code=" + reg_code, function (data) {
-            console.log(data)
-            $(input_city).empty().prop('disabled', true)
-            $.each(data, function (index, value) {
-                $(input_city).append($('<option>', {
-                    value: index,
-                    text: value
-                }));
-            })
+    $("#input_town").on("change", function () {
+        var _val = $(this).val();
+        var _text = $("#input_town option:selected").text();
+        $(this).get_brgy(_val, "#input_brgy", "");
+        $('#input_zipcode').val('');
+        $('#input_town_name').val(_text);
+    });
 
-            $(input_city).prop('disabled', true)
-            $(input_city).prepend($('<option>', {
-                value: "",
-                text: "--SELECT MUNICIPALITY/CITY, PROVINCE--"
-            }))
-            if (selected.length > 0) {
-                $(input_city).val($(input_city + " option[value=" + selected + "]").val());
-            } else {
-                $(input_city).val($(input_city + " option:first").val());
-            }
-        });
-        // return result;
-    };
-
-    $.fn.get_brgy = function (munc_code, input_brgy, selected) {
-        $(input_brgy).empty().prop('disabled', true);
-        $(input_brgy).append($('<option>', {
-            value: "",
-            text: "Loading Content..."
-        }));
-        $.getJSON("{{env('PSGC_BRGY_URL')}}?city_code=" + munc_code, function (data) {
-            $(input_brgy).empty().prop('disabled', true);
-
-            $.each(data, function (index, value) {
-                $(input_brgy).append($('<option>', {
-                    value: index,
-                    text: value.desc,
-                    "data-zip_code": (value.zip_code).trim()
-                }));
-            })
-            $(input_brgy).prop('disabled', false)
-            $(input_brgy).prepend($('<option>', {
-                value: "",
-                text: "--SELECT BARANGAY--"
-            }))
-
-            if (selected.length > 0) {
-                $(input_brgy).val($(input_brgy + " option[value=" + selected + "]").val());
-
-                if (typeof $(input_brgy + " option[value=" + selected + "]").data('zip_code') === undefined) {
-                    $(input_brgy.replace("brgy", "zipcode")).val("")
-                } else {
-                    $(input_brgy.replace("brgy", "zipcode")).val($(input_brgy + " option[value=" + selected + "]").data('zip_code'))
-                }
-
-            } else {
-                $(input_brgy).val($(input_brgy + " option:first").val());
-            }
-        });
+    function load_barangay() {
+        var _val = "030803000";
+        var _text = "BATAAN - CITY OF BALANGA";
+        $(this).get_brgy(_val, "#input_brgy", "");
+        $(this).get_brgy(_val, "#input_owner_brgy", "");
+        $('#input_zipcode').val('');
+        $('#input_town_name').val(_text);
     }
 
-    $(function () {
-        $('.create-form').on('submit', function() {
-            $('#input_business_type').prop('disabled', false);
-        });
+    @if(strlen(old('region')) > 0)
+    $(this).get_city("{{old('region')}}", "#input_town", "#input_brgy", "{{old('town')}}");
+    @endif
 
-        load_barangay();
-        $(this).get_region("#input_region", "#input_province", "#input_town", "#input_brgy", "{{old('region', '030000000')}}")
-        $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030803000')}}");
+    @if(strlen(old('brgy')) > 0)
+    $(this).get_brgy("{{old('town','030803000')}}", "#input_brgy", "{{old('brgy')}}");
+    @endif
 
-        $("#input_region").on("change", function () {
-            var _val = $(this).val();
-            var _text = $("#input_region option:selected").text();
-            $(this).get_city($("#input_region").val(), "#input_town", "#input_brgy", "{{old('town')}}");
-            $('#input_zipcode').val('');
-            $('#input_region_name').val(_text);
-        });
+    $("#input_brgy").on("change", function () {
+        $('#input_zipcode').val($(this).find(':selected').data('zip_code'))
+        var _text = $("#input_brgy option:selected").text();
+        $('#input_brgy_name').val(_text);
+    });
 
-        $("#input_town").on("change", function () {
-            var _val = $(this).val();
-            var _text = $("#input_town option:selected").text();
-            $(this).get_brgy(_val, "#input_brgy", "");
-            $('#input_zipcode').val('');
-            $('#input_town_name').val(_text);
-        });
+    $("#input_owner_brgy").on("change", function () {
+        var _text = $("#input_owner_brgy option:selected").text();
+        $('#input_owner_brgy_name').val(_text);
+    });
 
-        function load_barangay() {
-            var _val = "030803000";
-            var _text = "BATAAN - CITY OF BALANGA";
-            $(this).get_brgy(_val, "#input_brgy", "");
-            $(this).get_brgy(_val, "#input_owner_brgy", "");
-            $('#input_zipcode').val('');
-            $('#input_town_name').val(_text);
-        }
-
-        @if(strlen(old('region')) > 0)
-        $(this).get_city("{{old('region')}}", "#input_town", "#input_brgy", "{{old('town')}}");
-        @endif
-
-        @if(strlen(old('brgy')) > 0)
-        $(this).get_brgy("{{old('town','030803000')}}", "#input_brgy", "{{old('brgy')}}");
-        @endif
-
-        $("#input_brgy").on("change", function () {
-            $('#input_zipcode').val($(this).find(':selected').data('zip_code'))
-            var _text = $("#input_brgy option:selected").text();
-            $('#input_brgy_name').val(_text);
-        });
-
-        $("#input_owner_brgy").on("change", function () {
-            var _text = $("#input_owner_brgy option:selected").text();
-            $('#input_owner_brgy_name').val(_text);
-        });
-
+    $('#buttonID').click(function(){
+        alert('click');
     })
-
-    $(function(){
-
-        $('#buttonID').click(function(){
-            alert('click');
-        })
         // Lessor
-        load_lessor_barangay();
-        $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
-        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
+    load_lessor_barangay();
+    $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
+    $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
 
-        $("#input_lessor_region").on("change", function () {
-            var _val = $(this).val();
-            var _text = $("#input_lessor_region option:selected").text();
-            $(this).get_city('030000000', "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
-            $('#input_lessor_zipcode').val('');
-            $('#input_lessor_region_name').val(_text);
-        });
+    $("#input_lessor_region").on("change", function () {
+        var _val = $(this).val();
+        var _text = $("#input_lessor_region option:selected").text();
+        $(this).get_city('030000000', "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
+        $('#input_lessor_zipcode').val('');
+        $('#input_lessor_region_name').val(_text);
+    });
 
-        $("#input_lessor_town").on("change", function () {
-            var _val = $(this).val();
-            var _text = $("#input_lessor_town option:selected").text();
-            $(this).get_brgy(_val, "#input_lessor_brgy", "");
-            $('#input_lessor_zipcode').val('');
-            $('#input_lessor_town_name').val(_text);
-        });
+    $("#input_lessor_town").on("change", function () {
+        var _val = $(this).val();
+        var _text = $("#input_lessor_town option:selected").text();
+        $(this).get_brgy(_val, "#input_lessor_brgy", "");
+        $('#input_lessor_zipcode').val('');
+        $('#input_lessor_town_name').val(_text);
+    });
 
-        function load_lessor_barangay() {
-            var _val = "030803000";
-            var _text = "BATAAN - CITY OF BALANGA";
-            $(this).get_brgy(_val, "#input_lessor_brgy", "");
-            $('#input_lessor_zipcode').val('');
-            $('#input_lessor_town_name').val(_text);
+    function load_lessor_barangay() {
+        var _val = "030803000";
+        var _text = "BATAAN - CITY OF BALANGA";
+        $(this).get_brgy(_val, "#input_lessor_brgy", "");
+        $('#input_lessor_zipcode').val('');
+        $('#input_lessor_town_name').val(_text);
+    }
+
+    @if(strlen(old('lessor_region')) > 0)
+    $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
+    @endif
+
+    @if(strlen(old('lessor_brgy')) > 0)
+    $(this).get_brgy("{{old('lessor_town','030803000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
+    @endif
+
+    $("#input_lessor_brgy").on("change", function () {
+        $('#input_lessor_zipcode').val($(this).find(':selected').data('zip_code'))
+        var _text = $("#input_lessor_brgy option:selected").text();
+        $('#input_lessor_brgy_name').val(_text);
+    });
+
+    $('input[name="checkbox"]').on('change', function () {
+        $('input[name="checkbox"]').not(this).prop('checked', false);
+        if($(this).val() == 'yes'){
+            $('input[name="tax_incentive"]').val('');
+            $('#checkYes').show();
         }
+        if($(this).val() == 'no'){
+            $('#checkYes').hide();
+            $('input[name="tax_incentive"]').val('no');
+        }
+    });
+    $('input[name="has_septic_tank"]').on('change', function () {
+        $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+    });
+});
 
-        @if(strlen(old('lessor_region')) > 0)
-        $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
-        @endif
-
-        @if(strlen(old('lessor_brgy')) > 0)
-        $(this).get_brgy("{{old('lessor_town','030803000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
-        @endif
-
-        $("#input_lessor_brgy").on("change", function () {
-            $('#input_lessor_zipcode').val($(this).find(':selected').data('zip_code'))
-            var _text = $("#input_lessor_brgy option:selected").text();
-            $('#input_lessor_brgy_name').val(_text);
-        });
-
-    })
 
    
 

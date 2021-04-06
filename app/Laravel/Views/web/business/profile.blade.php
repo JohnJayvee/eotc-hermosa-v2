@@ -34,7 +34,7 @@
                                 <label class="text-uppercase">{{str_replace("_"," ",$profile->business_type)}}</label>
                                 <p>Business Type</p>
                             </div>
-                             <div class="col-md-">
+                             <div class="col-md-4">
                                 <label class="text-uppercase">{{str_replace("_"," ",$profile->business_scope)}}</label>
                                 <p>Business Scope</p>
                             </div>
@@ -42,10 +42,6 @@
                                 <label class="text-uppercase">{{$profile->dti_sec_cda_registration_no}}</label>
                                 <p>DTI/SEC/CDA registration No</p>
                             </div>
-                            <!-- <div class="col-md-2">
-                                <label class="text-uppercase">{{$profile->business_id_no}}</label>
-                                <p>Business ID</p>
-                            </div> -->
                         </div>
                         <div class="row underline mb-2">
                             <div class="col-md-4 mb-2">
@@ -103,6 +99,12 @@
                             <div class="col-md-4">
                                 <label class="text-uppercase">{{$profile->tax_incentive}}</label>
                                 <p>Tax Incetive</p>
+                            </div>
+                        </div>
+                        <div class="row underline mb-2">
+                            <div class="col-md-4">
+                                <label class="text-uppercase">{{$profile->has_septic_tank}}</label>
+                                <p>Septic Tank</p>
                             </div>
                         </div>
                         <h5 class="text-title text-uppercase mt-4">Owner Details</h5>

@@ -131,6 +131,7 @@ class BusinessController extends Controller
             $new_business->female_residing_in_city = $request->get('female_residing_in_city');
 
             $new_business->capitalization = $request->get('capitalization');
+            $new_business->has_septic_tank = $request->get('has_septic_tank');
             $new_business->email = $request->get('email');
             $new_business->location = $request->get('location');
             $new_business->geo_long = $request->get('geo_long');
@@ -248,7 +249,7 @@ class BusinessController extends Controller
 		return view('web.business.edit',$this->data);
 	}
 
-	public function business_update(PageRequest $request){
+	public function business_update(EditBusinessRequest $request){
 
         DB::beginTransaction();
 		try{
@@ -314,6 +315,7 @@ class BusinessController extends Controller
             $business->female_residing_in_city = $request->get('female_residing_in_city');
 
             $business->capitalization = $request->get('capitalization');
+            $business->has_septic_tank = $request->get('has_septic_tank');
             $business->location = $request->get('location');
             $business->geo_lat = $request->get('geo_lat');
             $business->geo_long = $request->get('geo_long');

@@ -313,7 +313,6 @@ class BusinessTransactionController extends Controller
 
             $owner_transaction_details = array('email' => request('business_info.owner_email'), 'contact_number' => request('business_info.owner_mobile_no'));
             $business_info = array_merge(request('business_info'), request('transaction'));
-
             $transaction->fill(array_merge( request('transaction'),  $owner_transaction_details))->save();
             $transaction->business_info->fill($business_info)->save();
 

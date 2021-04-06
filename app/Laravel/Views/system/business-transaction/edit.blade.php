@@ -229,14 +229,28 @@
                       </div>
                   </div>
               </div>
-              @if($transaction->business_info->tax_incentive != "no")
+
               <div class="col-md-6">
                   <div class="form-group" id="checkYes">
                       <label class="text-form pb-2">Please Specify entity:</label>
-                      <input type="text" class="form-control" name="tax_incentive" value="{{$transaction->business_info->tax_incentive != 'no' ? $transaction->business_info->tax_incentive : ' '}}">
+                      <input type="text" class="form-control" name="business_info[tax_incentive]" value="{{$transaction->business_info->tax_incentive != 'no' ? $transaction->business_info->tax_incentive : ' '}}">
                   </div>
               </div>
-              @endif
+          </div>
+          <div class="row">
+              <div class="col-md-6">
+                  <div class="form-group d-flex flex-row my-1">
+                      <label for="" class="text-form pb-2 col-md-6">Does your establishment has a septic tank or connected to a septic tank?</label>
+                      <div class="form-check form-check-inline">
+                          <input class="form-control" type="checkbox" name="business_info[has_septic_tank]" value="yes" style="width: 30px; height: 30px;" {{ $transaction->business_info->has_septic_tank == "yes" ? 'checked' : " " }}>
+                          <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                          <input class="form-control" type="checkbox" name="business_info[has_septic_tank]" value="no" style="width: 30px; height: 30px;" {{ $transaction->business_info->has_septic_tank == "no" ? 'checked' : " " }}>
+                          <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
+                      </div>
+                  </div>
+              </div>
           </div>
           <div class="row">
             <div class="col-md-12">
@@ -738,15 +752,19 @@
     $('input[name="checkbox"]').on('change', function () {
       $('input[name="checkbox"]').not(this).prop('checked', false);
       if($(this).val() == 'yes'){
-        $('input[name="tax_incentive"]').val('');
+        $('input[name="business_info[tax_incentive]"]').val('');
         $('#checkYes').show();
       }
       if($(this).val() == 'no'){
         $('#checkYes').hide();
-        $('input[name="tax_incentive"]').val('no');
+        $('input[name="business_info[tax_incentive]"]').val('no');
       }
     });
-
+    @if($transaction->business_info->tax_incentive == "no")
+      $('#checkYes').hide();
+    @else
+      $('#checkYes').show();
+    @endif
     $('.input-daterange').datepicker({
       format : "yyyy-mm-dd"
     });
@@ -779,6 +797,9 @@
         $(this).get_brgy(_val, "#input_owner_brgy", "");
     }
 
+    $('input[name="business_info[has_septic_tank]"]').on('change', function () {
+      $('input[name="business_info[has_septic_tank]"]').not(this).prop('checked', false);
+    });
 
     $("#input_brgy").on("change", function () {
       $('#input_zipcode').val($(this).find(':selected').data('zip_code'))
