@@ -269,6 +269,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="street_address" id="street_address">
+                            <input type="hidden" name="city" id="city_map">
+                            <input type="hidden" name="state" id="state">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="form-group">
@@ -467,7 +470,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Gender</label>
-                                        <select name="rep_gender" id="" class="form-control">
+                                        <select name="rep_gender" class="form-control">
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
                                         </select>
@@ -528,7 +531,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Gender</label>
-                                        <select name="lessor_gender" id="" class="form-control">
+                                        <select name="lessor_gender" class="form-control">
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
                                         </select>
@@ -901,12 +904,12 @@ $(function(){
     $('#map-address').on('click',function(){
         $(this).val('');
     })
-         // var x = $('#map-address').val()
-    $('#states').text( $("#map-address").val())
-    $('#postcode').text( $("#map-address").val())
+   
 
     function updateControls(addressComponents) {
-        $('#postcode').val(addressComponents.postalCode);       
+        $('#street_address').val(addressComponents.addressLine1);
+        $('#city_map').val(addressComponents.city);
+        $('#state').val(addressComponents.stateOrProvince);
     }
 
     $('#map').locationpicker({
@@ -914,7 +917,7 @@ $(function(){
           latitude:  14.6741,
           longitude: 120.5113
         },
-        zoom: 10,
+        zoom: 15,
         radius: 0,
         mapTypeId: 'satellite',
 

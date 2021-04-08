@@ -206,11 +206,11 @@
                                     <div class="form-group">
                                         <label for="" class="text-form pb-2 col-md-6">Does your establishment has a septic tank or connected to a septic tank?</label>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="yes" style="width: 30px; height: 30px;">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="yes" style="width: 30px; height: 30px;" {{$business->has_septic_tank == "yes" ? 'checked' : " "}}>
                                             <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="no" style="width: 30px; height: 30px;">
+                                            <input class="form-control form-control-sm" type="checkbox" name="has_septic_tank" value="no" style="width: 30px; height: 30px;" {{$business->has_septic_tank == "no" ? 'checked' : " "}}>
                                             <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
                                         </div>
                                         @if($errors->first('has_septic_tank'))
@@ -354,7 +354,7 @@
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label class="text-form pb-2">Barangay </label>
-                                        {!!Form::select('owner_brgy',[],old('owner_brgy' , $business->owner_brgy),['id' => "input_owner_brgy",'class' => "form-control form-control-sm classic ".($errors->first('owner_brgy') ? 'border-red' : NULL)])!!}
+                                        {!!Form::select('owner_brgy',[],old('owner_brgy'),['id' => "input_owner_brgy",'class' => "form-control form-control-sm classic ".($errors->first('owner_brgy') ? 'border-red' : NULL)])!!}
                                         @if($errors->first('owner_brgy'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('owner_brgy')}}</small>
                                         @endif
@@ -897,24 +897,24 @@
         });
 
         function load_lessor_barangay() {
-            var _val = "097332000";
+            var _val = "030803000";
             var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
             $(this).get_brgy(_val, "#input_lessor_brgy", "");
-            $(this).get_brgy(_val, "#input_owner_brgy", "");
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
         }
       
         function load_owner_barangay() {
-            var _val = "097332000";
+            var _val = "030803000";
             var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
             $(this).get_brgy(_val, "#input_owner_brgy", "");
         }
 
-        $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '090000000')}}")
-        $(this).get_city("090000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '097332000')}}");
-        $(this).get_brgy('097332000', "#input_lessor_brgy", "{{ $business->lessor_brgy }}");
-        $(this).get_brgy('097332000', "#input_owner_brgy", "{{ $business->owner_brgy }}");
+        $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
+        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
+        $(this).get_brgy('030803000', "#input_lessor_brgy", "{{ $business->lessor_brgy }}");
+        $(this).get_brgy('030803000', "#input_owner_brgy", "{{ $business->owner_brgy }}");
+
         $("#input_lessor_region").on("change", function () {
             var _val = $(this).val();
             var _text = $("#input_lessor_region option:selected").text();

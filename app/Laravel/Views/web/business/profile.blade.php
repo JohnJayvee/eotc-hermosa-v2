@@ -25,7 +25,7 @@
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
                                     <a class="dropdown-item" href="{{route('web.business.history',[$profile->id])}}">Application History</a>
                                     <a class="dropdown-item" href="{{route('web.business_payment.index',[$profile->id])}}">Business Payment</a>
-                                    <a class="dropdown-item action-delete" data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}">Delete Business CV</a>
+                                    <a class="dropdown-item action-delete" data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}" href="#">Delete Business CV</a>
                                 </div>
                             </div>
                         </div>
@@ -106,6 +106,10 @@
                                 <label class="text-uppercase">{{$profile->has_septic_tank}}</label>
                                 <p>Septic Tank</p>
                             </div>
+                            <div class="col-md-8">
+                                <label class="text-uppercase">{{$profile->location}}</label>
+                                <p>Location</p>
+                            </div>
                         </div>
                         <h5 class="text-title text-uppercase mt-4">Owner Details</h5>
                         <div class="row underline mb-2">
@@ -159,47 +163,21 @@
                                 <p>TIN</p>
                             </div>
                         </div>
-                        <div class="row underline mb-2">
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->unit_no}}</label>
-                                <p>House/Unit No.</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->street_address}}</label>
-                                <p>Street Address</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label>{{$profile->brgy_name}}</label>
-                                <p>Barangay</p>
-                            </div>
-
-                        </div>
-                        <div class="row underline mb-2">
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->zipcode}}</label>
-                                <p>Zipcode</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->town_name}}</label>
-                                <p>Town/Municipality</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label>{{$profile->region_name}}</label>
-                                <p>Region</p>
-                            </div>
-                        </div>
+                      
                         <h5 class="text-title text-uppercase mt-4">Line of Business</h5>
                         <div class="row underline mb-2">
-                            @foreach ($business_line as $key => $item)
-                                <div class="col-md-4">
-                                    <label class="text-uppercase">{{ $item->name }}
-                                        @if(!empty($item->particulars) && $item->particulars != "")
-                                            <small>({{ $item->particulars }})</small>
-                                        @endif
-                                    </label>
-                                    <p class="text-title">Business Line</p>
-                                </div>
-                            @endforeach
+                            @if($business_transaction)
+                                @foreach ($business_line as $key => $item)
+                                    <div class="col-md-4">
+                                        <label class="text-uppercase">{{ $item->line_of_business }}
+                                            @if(!empty($item->particulars) && $item->particulars != "")
+                                                <small>({{ $item->particulars }})</small>
+                                            @endif
+                                        </label>
+                                        <p class="text-title">Business Line</p>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                         <div class="row underline mb-2">
                             <div class="col-md-3">
@@ -280,35 +258,7 @@
                                 <p>Region</p>
                             </div>
                         </div>
-                        <h5 class="text-title text-uppercase mt-4">Business Address Information</h5>
-                        <div class="row underline mb-2">
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->unit_no}}</label>
-                                <p>House/Unit No.</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->street_address}}</label>
-                                <p>Street Address</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label>{{$profile->brgy_name}}</label>
-                                <p>Barangay</p>
-                            </div>
-                        </div>
-                        <div class="row underline mb-2">
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->zipcode}}</label>
-                                <p>Zipcode</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="text-uppercase">{{$profile->town_name}}</label>
-                                <p>Town/Municipality</p>
-                            </div>
-                            <div class="col-md-4">
-                                <label>{{$profile->region_name}}</label>
-                                <p>Region</p>
-                            </div>
-                        </div>
+                      
                         <h5 class="text-title text-uppercase mt-4">Other Information Form (Government Owned Or Controlled Corporations)</h5>
                          <div class="row underline mb-2">
                             <div class="col-md-6">

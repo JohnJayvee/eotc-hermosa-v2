@@ -253,7 +253,7 @@
           </div>
           <div class="col-md-6">
             @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department_id, json_decode($transaction->department_involved)))
+              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
               <a href="{{route('system.business_transaction.assessment',[$transaction->id])}}"  class="btn btn-primary border-5 text-white float-right">Get Assessment Details</a>
               @endif
             @endif
@@ -345,8 +345,6 @@
 
 </div>
 @stop
-
-
 
 @section('page-styles')
 <!-- <link rel="stylesheet" href="{{asset('system/vendors/sweet-alert2/sweetalert2.min.css')}}"> -->

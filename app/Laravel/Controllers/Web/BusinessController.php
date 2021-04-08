@@ -232,7 +232,9 @@ class BusinessController extends Controller
             return redirect()->route('web.business.index');
         }
         $this->data['business_transaction'] = BusinessTransaction::where('business_id', $id)->first();
-        $this->data['business_line'] = BusinessLine::where('business_id', session()->get('selected_business_id'))->get();
+        if ($this->data['business_transaction']) {
+            $this->data['business_line'] = BusinessActivity::where('application_business_permit_id', $this->data['business_transaction']->business_permit_id)->get();
+        }
         session()->put('selected_business_id', $id);
 		return view('web.business.profile',$this->data);
     }
