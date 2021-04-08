@@ -51,15 +51,6 @@
 	<table class="center bg-white" width="55%">
 
 			<tr>
-				<th colspan="2" class="primary" style="padding: 25px;">
-					<div id="pageElement">
-						<div style="float: left;color: #000;padding-left: 30px;">Thank You for using &nbsp;</div>
-					  	<div style="padding-right: 30px;"> <img src="{{asset('web/img/oBOSS.png')}}" alt="" style="width: 130px;"> </div>
-					</div>
-				</th>
-			</tr>
-
-			<tr>
 				<th colspan="2" class="text-gray" style="padding: 10px;">Date: {{Helper::date_only(Carbon::now())}} | {{Helper::time_only(Carbon::now())}}</th>
 			</tr>
 			<tr>

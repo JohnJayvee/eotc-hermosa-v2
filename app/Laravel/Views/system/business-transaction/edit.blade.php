@@ -760,7 +760,7 @@
         $('input[name="business_info[tax_incentive]"]').val('no');
       }
     });
-    @if($transaction->business_info->tax_incentive == "no")
+    @if($transaction->business_info->tax_incentive == "no" || !$transaction->business_info->tax_incentive)
       $('#checkYes').hide();
     @else
       $('#checkYes').show();

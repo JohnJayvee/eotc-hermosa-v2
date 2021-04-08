@@ -149,18 +149,18 @@
 		</tr>
 		<tr>
 			<td class="pt-1" >Postal Code: </td>
-			<td class="pt-1" colspan="2">Email Address: {{ $business->owner_email }}</td>
+			<td class="pt-1" colspan="2">Email Address: {{ strtolower($business->owner_email) }}</td>
 		</tr>
 		<tr>
 			<td class="pt-1" >Telephone No.:  </td>
 			<td class="pt-1" colspan="2">Mobile No.: {{ $business->owner_mobile_no }}</td>
 		</tr>
 		<tr>
-			<td class="pt-1" colspan="3">In Case of emergency, provide name of contact person: {{ $business->emergency_contact_full_name }}</td>
+			<td class="pt-1" colspan="3">In Case of emergency, provide name of contact person: {{ $business->emergency_contact_fullname }}</td>
 		</tr>
 		<tr>
 			<td class="pt-1" >Telephone / Mobile No.: {{ $business->emergency_contact_tel_no }} {{$business->emergency_contact_tel_no && $business->emergency_contact_mobile_no ? "/" : " "}}  {{ $business->emergency_contact_mobile_no}} </td>
-			<td class="pt-1" colspan="2">Email Address: {{$business->emrgency_contact_email}} </td>
+			<td class="pt-1" colspan="2">Email Address: {{$business->emergency_contact_email}} </td>
 		</tr>
 		<tr>
 			<td class="pt-1">Business Area (in sq m): {{$business->business_area}}</td>

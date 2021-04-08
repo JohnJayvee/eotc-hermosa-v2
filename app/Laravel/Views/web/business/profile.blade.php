@@ -106,7 +106,10 @@
                                 <label class="text-uppercase">{{$profile->has_septic_tank}}</label>
                                 <p>Septic Tank</p>
                             </div>
-                            <div class="col-md-8">
+                        </div>
+                        <h5 class="text-title text-uppercase mt-4">Business Address</h5>
+                        <div class="row underline mb-2">
+                            <div class="col-md-12">
                                 <label class="text-uppercase">{{$profile->location}}</label>
                                 <p>Location</p>
                             </div>
@@ -146,19 +149,22 @@
                         </div>
                         <h5 class="text-title text-uppercase mt-4">Authorize Representative</h5>
                         <div class="row underline mb-2">
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="text-uppercase">{{$profile->rep_full_name}}</label>
                                 <p>Name</p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="text-uppercase">{{$profile->rep_gender}}</label>
                                 <p>Gender</p>
                             </div>
-                            <div class="col-md-3">
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <label class="text-uppercase">{{$profile->rep_position}}</label>
                                 <p>Position</p>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label class="text-uppercase">{{$profile->rep_tin}}</label>
                                 <p>TIN</p>
                             </div>

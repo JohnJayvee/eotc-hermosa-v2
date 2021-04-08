@@ -120,32 +120,9 @@
             </div>
             <h5 class="text-title text-uppercase mt-4">Business Address Information</h5>
             <div class="row underline mb-2">
-                <div class="col-md-4">
-                    <label class="text-uppercase">{{$profile->unit_no}}</label>
-                    <p>House/Unit No.</p>
-                </div>
-                <div class="col-md-4">
-                    <label class="text-uppercase">{{$profile->street_address}}</label>
-                    <p>Street Address</p>
-                </div>
-                <div class="col-md-4">
-                    <label>{{$profile->brgy_name}}</label>
-                    <p>Barangay</p>
-                </div>
-
-            </div>
-            <div class="row underline mb-2">
-                <div class="col-md-4">
-                    <label class="text-uppercase">{{$profile->zipcode}}</label>
-                    <p>Zipcode</p>
-                </div>
-                <div class="col-md-4">
-                    <label class="text-uppercase">{{$profile->town_name}}</label>
-                    <p>Town/Municipality</p>
-                </div>
-                <div class="col-md-4">
-                    <label>{{$profile->region_name}}</label>
-                    <p>Region</p>
+                <div class="col-md-12">
+                    <label class="text-uppercase">{{$profile->location}}</label>
+                    <p>Location</p>
                 </div>
             </div>
             <h5 class="text-title text-uppercase mt-4">OTHER INFORMATION FORM (GOVERNMENT OWNED OR CONTROLLED CORPORATIONS)</h5>

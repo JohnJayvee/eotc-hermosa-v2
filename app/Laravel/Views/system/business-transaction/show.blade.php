@@ -104,10 +104,7 @@
                 <p class="text-title fw-500">No. of Female Employees: <span class="text-black"> {{$transaction->business_info->no_of_female_employee}}</span></p>
                 <p class="text-title fw-500">No. of Female Employees residing in city: <span class="text-black"> {{$transaction->business_info->female_residing_in_city}}</span></p>
                 <p class="text-title fw-500">Business Area (Sq. m): <span class="text-black"> {{$transaction->business_info->business_area}}</span></p>
-                <p class="text-title fw-500">Business Unit No / Street: <span class="text-black">{{$transaction->business_info->business_address}}</span></p>
-                <p class="text-title fw-500">Business Barangay: <span class="text-black"> {{$transaction->business_info->brgy_name}}</span></p>
-                <p class="text-title fw-500">Business Province/Town: <span class="text-black"> {{$transaction->business_info->town_name}}</span></p>
-                <p class="text-title fw-500">Business Region: <span class="text-black">{{strtoupper($transaction->business_info->region_name)}}</span></p>
+                <p class="text-title fw-500">Business Location: <span class="text-black"> {{$transaction->business_info->location}}</span></p>
             </div>
           @endif
           <div class="col-md-6 mt-4">

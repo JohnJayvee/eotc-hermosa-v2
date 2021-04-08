@@ -10,62 +10,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                {{-- {{ dd(session()->all()) }} --}}
-                    @include('system._components.notifications')
-                    @if($errors->first('valid_business'))
-                        <small class="form-text pl-1" style="color:red;">{{$errors->first('valid_business')}}</small>
-                    @endif
-                    {{-- <div class="card">
-                       <div class="card-body">
-                            <form method="get" action="{{ route('web.business.create') }}">
-                                <h5 class="text-title text-uppercase">Business ID No. </h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1" class="text-form pb-2">Business ID No. <span class="text-danger">* </span> <a href="#myModal" role="button" class="text-info" data-toggle="modal">To know where your BusinessID No. is click here</a>
-                                            <input type="hidden" class="form-control"  name="permit_no" value="{{old('permit_no', $business['PermitNo'] ?? '') }}">
-                                            <input type="hidden" class="form-control"  name="business_plate_no" value="{{old('business_plate_no', $business['BusinessPlateNo'] ?? '') }}">
-
-                                            <input type="number" class="form-control form-control-sm {{ $errors->first('business_id_no') ? 'is-invalid': NULL  }}"  name="business_id_no" value="{{old('business_id_no', $business['BusinessID'] ?? '') }}" required>
-                                            <span class="text-info"><small>Please make sure that your BID is correct. You can't undo this action.</small></span>
-                                            @if($errors->first('business_id_no'))
-                                                <small class="form-text pl-1" style="color:red;">{{$errors->first('business_id_no')}}</small>
-                                            @endif
-                                            @if($errors->first('BusinessID'))
-                                            <small class="form-text pl-1" style="color:red;">{{$errors->first('BusinessID')}}</small>
-                                            @endif
-                                            <button type="submit" class="btn badge-primary-2 text-white mr-2" style="float: right;">Validate</button>
-                                        </div>
-
-                                        @if (session('negativelist') == 1)
-                                        <div class="modal modal_negative">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-body d-flex flex-column">
-                                                        <div class="row mx-auto">
-                                                            <i class="fas fa-exclamation-triangle fa-5x text-danger text-center"></i>
-                                                            <br>
-                                                        </div>
-                                                        <h3>Oops, sorry! Your Business ID is in our Negative List. Please contact the BPLO Office for further concerns.</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        <script>
-                                            $(function() {
-                                                $('.modal_negative').modal('show');
-                                            })
-                                        </script>
-
-                                    </div>
-                                </div>
-                            </form>
-                        </div> 
-                    </div> --}}
                     <div class="card">
                         <div class="card-body">
-                            <form class="create-form" method="POST" action="{{ route('web.business.create') }}" enctype="multipart/form-data">
+                            <form class="create-form" method="POST" action="{{ route('web.business.create') }}" enctype="multipart/form-data" id="create_form">
                             {!!csrf_field()!!}
                             <input type="hidden" name="business_id_no" value="{{  old('business_id_no' ,( $business['BusinessID'] ?? '') )}}">
                             <input type="hidden" name="valid_business" class="form-control form-control-sm {{ $errors->first('valid_business') ? 'is-invalid': NULL  }}" value="{{ session('status_code') ?? '' }}">
@@ -336,8 +283,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" class="form-control" name="lessor_region_name" id="input_lessor_region_name" value="{{old('lessor_region_name', 'REGION IX (ZAMBOANGA PENINSULA)')}}">
-                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA')}}">
+                            <input type="hidden" class="form-control" name="lessor_region_name" id="input_lessor_region_name" value="{{old('lessor_region_name', 'REGION III (CENTRAL LUZON))')}}">
+                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'BATAAN - CITY OF BALANGA')}}">
                             <input type="hidden" class="form-control" name="lessor_brgy_name" id="input_lessor_brgy_name" value="{{old('lessor_brgy_name')}}">
 
                             <h5 class="text-title text-uppercase">Owners Information</h5>
@@ -833,6 +780,7 @@ $.fn.get_region = function (input_region, input_province, input_city, input_brgy
     // return result;
 };
 
+
 $.fn.get_city = function (reg_code, input_city, input_brgy, selected) {
     $(input_brgy).empty().prop('disabled', true)
     $(input_city).append($('<option>', {
@@ -899,160 +847,118 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
         }
     });
 }
+
+$( "#create_form" ).submit(function( event ) {
+    $("#input_lessor_region").prop( "disabled", false );
+    $("#input_lessor_town").prop( "disabled", false );
+});   
     
-$(function(){
-    $('#map-address').on('click',function(){
-        $(this).val('');
+    $(function () {
+        $('input[name="has_septic_tank"]').on('change', function () {
+            $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+        });
+
+        $('#buttonID').click(function(){
+            alert('click');
+        })
+
+        load_lessor_barangay();
+        load_owner_barangay();
+
+        $('#map-address').on('click',function(){
+            $(this).val('');
+        })
+        $('#states').text( $("#map-address").val())
+        $('#postcode').text( $("#map-address").val())
+
+        function updateControls(addressComponents) {
+            $('#postcode').val(addressComponents.postalCode);       
+        }
+
+        $('#map').locationpicker({
+          location: {
+            latitude: 14.6741,
+            longitude: 120.5113
+          },
+          zoom: 15,
+          radius: 0,
+          mapTypeId: 'satellite',
+
+          inputBinding : {
+              locationNameInput: $('#map-address'),
+              latitudeInput: $('#geo_lat'),
+              longitudeInput: $('#geo_long'),
+          },
+          enableAutocomplete: true,
+          autocompleteOptions: {
+            componentRestrictions: {country: 'ph'}
+          },
+          onchanged: function (currentLocation, isMarkerDropped) {
+            var addressComponents = $(this).locationpicker('map').location.addressComponents;
+            updateControls(addressComponents);
+          },
+          oninitialized: function(component) {
+            var addressComponents = $(component).locationpicker('map').location.addressComponents;
+            updateControls(addressComponents);
+          }
+        });
+
+        function load_lessor_barangay() {
+            var _val = "030803000";
+            var _text = "BATAAN - CITY OF BALANGA";
+            $(this).get_brgy(_val, "#input_lessor_brgy", "");
+            $('#input_lessor_zipcode').val('');
+            $('#input_lessor_town_name').val(_text);
+        }
+      
+        function load_owner_barangay() {
+            var _val = "030803000";
+            var _text = "BATAAN - CITY OF BALANGA";
+            $(this).get_brgy(_val, "#input_owner_brgy", "");
+        }
+
+        $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}");
+        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
+        $(this).get_brgy('030803000', "#input_lessor_brgy", "{{old('lessor_brgy')}}");
+        $(this).get_brgy('030803000', "#input_owner_brgy", "{{ old('owner_brgy') }}");
+
+        $("#input_lessor_region").on("change", function () {
+            var _val = $(this).val();
+            var _text = $("#input_lessor_region option:selected").text();
+            $(this).get_city($("#input_lessor_region").val(), "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
+            $('#input_zipcode').val('');
+            $('#input_region_name').val(_text);
+        });
+
+        $("#input_lessor_town").on("change", function () {
+            var _val = $(this).val();
+            var _text = $("#input_lessor_town option:selected").text();
+            $(this).get_brgy($("#input_lessor_town").val(), "#input_lessor_brgy", "");
+            $('#input_lessor_zipcode').val('');
+            $('#input_lessor_town_name').val(_text);
+        });
+
+       
+
+        @if(strlen(old('lessor_region')) > 0)
+        $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
+        @endif
+
+        @if(strlen(old('lessor_town')) > 0)
+        $(this).get_brgy("{{old('lessor_town')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
+        @endif
+
+        $("#input_lessor_brgy").on("change", function () {
+            $('#input_lessor_zipcode').val($(this).find(':selected').data('zip_code'))
+            var _text = $("#input_lessor_brgy option:selected").text();
+            $('#input_lessor_brgy_name').val(_text);
+        });
+        $("#input_owner_brgy").on("change", function () {
+            var _text = $("#input_owner_brgy option:selected").text();
+            $('#input_owner_brgy_name').val(_text);
+        });
+
     })
-   
-
-    function updateControls(addressComponents) {
-        $('#street_address').val(addressComponents.addressLine1);
-        $('#city_map').val(addressComponents.city);
-        $('#state').val(addressComponents.stateOrProvince);
-    }
-
-    $('#map').locationpicker({
-        location: {
-          latitude:  14.6741,
-          longitude: 120.5113
-        },
-        zoom: 15,
-        radius: 0,
-        mapTypeId: 'satellite',
-
-        inputBinding : {
-            locationNameInput: $('#map-address'),
-            latitudeInput: $('#geo_lat'),
-            longitudeInput: $('#geo_long'),
-        },
-        enableAutocomplete: true,
-        autocompleteOptions: {
-          componentRestrictions: {country: 'ph'}
-        },
-        onchanged: function (currentLocation, isMarkerDropped) {
-          var addressComponents = $(this).locationpicker('map').location.addressComponents;
-          updateControls(addressComponents);
-        },
-        oninitialized: function(component) {
-          var addressComponents = $(component).locationpicker('map').location.addressComponents;
-          updateControls(addressComponents);
-        }
-    });
-
-    $('.create-form').on('submit', function() {
-        $('#input_business_type').prop('disabled', false);
-    });
-
-    load_barangay();
-    $(this).get_region("#input_region", "#input_province", "#input_town", "#input_brgy", "{{old('region', '030000000')}}")
-    $(this).get_city("030000000", "#input_town", "#input_brgy", "{{old('town', '030803000')}}");
-
-    $("#input_region").on("change", function () {
-        var _val = $(this).val();
-        var _text = $("#input_region option:selected").text();
-        $(this).get_city($("#input_region").val(), "#input_town", "#input_brgy", "{{old('town')}}");
-        $('#input_zipcode').val('');
-        $('#input_region_name').val(_text);
-    });
-
-    $("#input_town").on("change", function () {
-        var _val = $(this).val();
-        var _text = $("#input_town option:selected").text();
-        $(this).get_brgy(_val, "#input_brgy", "");
-        $('#input_zipcode').val('');
-        $('#input_town_name').val(_text);
-    });
-
-    function load_barangay() {
-        var _val = "030803000";
-        var _text = "BATAAN - CITY OF BALANGA";
-        $(this).get_brgy(_val, "#input_brgy", "");
-        $(this).get_brgy(_val, "#input_owner_brgy", "");
-        $('#input_zipcode').val('');
-        $('#input_town_name').val(_text);
-    }
-
-    @if(strlen(old('region')) > 0)
-    $(this).get_city("{{old('region')}}", "#input_town", "#input_brgy", "{{old('town')}}");
-    @endif
-
-    @if(strlen(old('brgy')) > 0)
-    $(this).get_brgy("{{old('town','030803000')}}", "#input_brgy", "{{old('brgy')}}");
-    @endif
-
-    $("#input_brgy").on("change", function () {
-        $('#input_zipcode').val($(this).find(':selected').data('zip_code'))
-        var _text = $("#input_brgy option:selected").text();
-        $('#input_brgy_name').val(_text);
-    });
-
-    $("#input_owner_brgy").on("change", function () {
-        var _text = $("#input_owner_brgy option:selected").text();
-        $('#input_owner_brgy_name').val(_text);
-    });
-
-    $('#buttonID').click(function(){
-        alert('click');
-    })
-        // Lessor
-    load_lessor_barangay();
-    $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
-    $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
-
-    $("#input_lessor_region").on("change", function () {
-        var _val = $(this).val();
-        var _text = $("#input_lessor_region option:selected").text();
-        $(this).get_city('030000000', "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
-        $('#input_lessor_zipcode').val('');
-        $('#input_lessor_region_name').val(_text);
-    });
-
-    $("#input_lessor_town").on("change", function () {
-        var _val = $(this).val();
-        var _text = $("#input_lessor_town option:selected").text();
-        $(this).get_brgy(_val, "#input_lessor_brgy", "");
-        $('#input_lessor_zipcode').val('');
-        $('#input_lessor_town_name').val(_text);
-    });
-
-    function load_lessor_barangay() {
-        var _val = "030803000";
-        var _text = "BATAAN - CITY OF BALANGA";
-        $(this).get_brgy(_val, "#input_lessor_brgy", "");
-        $('#input_lessor_zipcode').val('');
-        $('#input_lessor_town_name').val(_text);
-    }
-
-    @if(strlen(old('lessor_region')) > 0)
-    $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
-    @endif
-
-    @if(strlen(old('lessor_brgy')) > 0)
-    $(this).get_brgy("{{old('lessor_town','030803000')}}", "#input_lessor_brgy", "{{old('lessor_brgy')}}");
-    @endif
-
-    $("#input_lessor_brgy").on("change", function () {
-        $('#input_lessor_zipcode').val($(this).find(':selected').data('zip_code'))
-        var _text = $("#input_lessor_brgy option:selected").text();
-        $('#input_lessor_brgy_name').val(_text);
-    });
-
-    $('input[name="checkbox"]').on('change', function () {
-        $('input[name="checkbox"]').not(this).prop('checked', false);
-        if($(this).val() == 'yes'){
-            $('input[name="tax_incentive"]').val('');
-            $('#checkYes').show();
-        }
-        if($(this).val() == 'no'){
-            $('#checkYes').hide();
-            $('input[name="tax_incentive"]').val('no');
-        }
-    });
-    $('input[name="has_septic_tank"]').on('change', function () {
-        $('input[name="has_septic_tank"]').not(this).prop('checked', false);
-    });
-});
 
 
    

@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <form class="create-form" method="POST" enctype="multipart/form-data">
+                <form class="create-form" method="POST" enctype="multipart/form-data" id="edit_form">
                     @include('system._components.notifications')
                     {!!csrf_field()!!}
                     <div class="card">
@@ -283,8 +283,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" class="form-control" name="lessor_region_name" id="input_lessor_region_name" value="{{old('lessor_region_name', 'REGION IX (ZAMBOANGA PENINSULA)')}}">
-                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA')}}">
+                            <input type="hidden" class="form-control" name="lessor_region_name" id="input_lessor_region_name" value="{{old('lessor_region_name', 'REGION III (CENTRAL LUZON)')}}">
+                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'BATAAN - CITY OF BALANGA')}}">
                             <input type="hidden" class="form-control" name="lessor_brgy_name" id="input_lessor_brgy_name" value="{{old('lessor_brgy_name', $business->lessor_brgy_name)}}">
                             <h5 class="text-title text-uppercase">Owners Information</h5>
                             <div class="row">
@@ -765,7 +765,7 @@
                 }));
             })
 
-            $(input_region).prop('disabled', false)
+            $(input_region).prop('disabled', true)
             $(input_region).prepend($('<option>', {
                 value: "",
                 text: "--Select Region--"
@@ -846,6 +846,10 @@
         });
     }
 
+    $( "#edit_form" ).submit(function( event ) {
+        $("#input_lessor_region").prop( "disabled", false );
+        $("#input_lessor_town").prop( "disabled", false );
+    });   
     $(function () {
         $('input[name="has_septic_tank"]').on('change', function () {
             $('input[name="has_septic_tank"]').not(this).prop('checked', false);
@@ -898,7 +902,7 @@
 
         function load_lessor_barangay() {
             var _val = "030803000";
-            var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
+            var _text = "BATAAN - CITY OF BALANGA";
             $(this).get_brgy(_val, "#input_lessor_brgy", "");
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
@@ -906,7 +910,7 @@
       
         function load_owner_barangay() {
             var _val = "030803000";
-            var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
+            var _text = "BATAAN - CITY OF BALANGA";
             $(this).get_brgy(_val, "#input_owner_brgy", "");
         }
 
@@ -926,7 +930,7 @@
         $("#input_lessor_town").on("change", function () {
             var _val = $(this).val();
             var _text = $("#input_lessor_town option:selected").text();
-            $(this).get_brgy(_val, "#input_lessor_brgy", "");
+            $(this).get_brgy($("#input_lessor_town").val(), "#input_lessor_brgy", "");
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
         });

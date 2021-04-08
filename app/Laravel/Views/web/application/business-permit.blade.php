@@ -194,6 +194,12 @@
                                         <p class="form-data text-success text-uppercase">{{ $business->tax_incentive }}</p>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="" class="text-form pb-2">Has Septic Tank?</label>
+                                        <p class="form-data text-success text-uppercase">{{ $business->has_septic_tank }}</p>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
@@ -211,46 +217,14 @@
                             </div>
                             <h5 class="text-title text-uppercase">Business Address</h5>
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="form-group">
-                                        <p class="form-data text-success text-uppercase">{{ $business->region_name }}</p>
+                                        <label for="exampleInputEmail1" class="text-form pb-2">Location</label>
+                                        <p class="form-data text-success text-uppercase">{{ $business->location }}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label class="text-form pb-2">City Municipality</label>
-                                        <p class="form-data text-success text-uppercase">{{ $business->town_name }}</p>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-lg-4">
-                                    <div class="form-group">
-                                        <label class="text-form pb-2">Barangay</label>
-                                        <p class="form-data text-success text-uppercase">{{ $business->brgy_name }}</p>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-2 col-lg-2">
-                                    <div class="form-group">
-                                        <label for="input_zipcode" class="text-form pb-2">Zipcode</label>
-                                        <p class="form-data text-success text-uppercase">{{ $business->zipcode }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">House/Bldg No.</label>
-                                        <p class="form-data text-success text-uppercase">{{ $business->unit_no }}</p>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-6 col-lg-6">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">Street Address</label>
-                                        <p class="form-data text-success text-uppercase">{{ $business->street_address }}</p>
-                                    </div>
-                                </div>
-                            </div>
+                           
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="form-group">
