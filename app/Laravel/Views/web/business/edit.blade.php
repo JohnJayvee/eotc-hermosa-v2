@@ -108,24 +108,6 @@
                                             <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
                                             {{-- <small class="my-2" for="inlineCheckbox3">Please Specify entity:</small> --}}
                                         </div>
-                                        <script>
-                                            $(function(){
-                                                var value = '{!! $business->tax_incentive !!}'
-
-                                                $('input[name="checkbox"]').on('change', function () {
-                                                    $('input[name="checkbox"]').not(this).prop('checked', false);
-
-                                                    if($(this).val() == 'yes'){
-                                                        $('input[name="tax_incentive"]').val('');
-                                                        $('#checkYes').show();
-                                                    }
-                                                    if($(this).val() == 'no'){
-                                                        $('#checkYes').hide();
-                                                        $('input[name="tax_incentive"]').val('no');
-                                                    }
-                                                });
-                                            })
-                                        </script>
                                         <div class="form-check form-check-inline">
                                             <input class="form-control form-control-sm" type="checkbox" name="checkbox" value="no" style="width: 30px; height: 30px;" {{ $business->tax_incentive == 'no' ? 'checked' : $business->tax_incentive }}>
                                             <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
@@ -851,10 +833,7 @@
         $("#input_lessor_town").prop( "disabled", false );
     });   
     $(function () {
-        $('input[name="has_septic_tank"]').on('change', function () {
-            $('input[name="has_septic_tank"]').not(this).prop('checked', false);
-        });
-
+        
         $('#buttonID').click(function(){
             alert('click');
         })
@@ -899,7 +878,22 @@
             updateControls(addressComponents);
           }
         });
+        $('input[name="has_septic_tank"]').on('change', function () {
+            $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+        });
 
+        $('input[name="checkbox"]').on('change', function () {
+            $('input[name="checkbox"]').not(this).prop('checked', false);
+
+            if($(this).val() == 'yes'){
+                $('input[name="tax_incentive"]').val('');
+                $('#checkYes').show();
+            }
+            if($(this).val() == 'no'){
+                $('#checkYes').hide();
+                $('input[name="tax_incentive"]').val('no');
+            }
+        });
         function load_lessor_barangay() {
             var _val = "030803000";
             var _text = "BATAAN - CITY OF BALANGA";
@@ -935,7 +929,6 @@
             $('#input_lessor_town_name').val(_text);
         });
 
-       
 
         @if(strlen(old('lessor_region')) > 0)
         $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");

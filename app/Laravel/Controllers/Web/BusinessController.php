@@ -251,7 +251,6 @@ class BusinessController extends Controller
 	}
 
 	public function business_update(EditBusinessRequest $request){
-        dd($request->lessor_town);
         DB::beginTransaction();
 		try{
 			$business = Business::find(session()->get('selected_business_id'));

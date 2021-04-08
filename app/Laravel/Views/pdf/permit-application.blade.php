@@ -177,7 +177,7 @@
 			<td class="pt-1" colspan="3">Lessor's Full Address: {{ Str::title($business->lessor_address) }}</td>
 		</tr>
 		<tr>
-			<td class="pt-1" colspan="3">Lessor's Full Telephone / Mobile No.: {{ $business->emergency_contact_tel_no }} {{$business->emergency_contact_tel_no && $business->emergency_contact_mobile_no ? "/" : " "}}  {{ $business->emergency_contact_mobile_no}}</td>
+			<td class="pt-1" colspan="3">Lessor's Full Telephone / Mobile No.: {{ $business->lessor_tel_no }} {{$business->lessor_tel_no && $business->lessor_mobile_no ? "/" : " "}}  {{ $business->lessor_mobile_no}}</td>
 		</tr>
 		<tr>
 			<td class="pt-1" colspan="3">Lessor's Email Address: {{ Str::title($business->lessor_email) }}</td>

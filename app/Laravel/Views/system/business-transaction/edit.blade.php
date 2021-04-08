@@ -220,18 +220,18 @@
                   <div class="form-group d-flex flex-row my-1">
                       <label for="" class="text-form pb-2 col-md-6">Are you enjoying tax incentive from any Goverment Entity?</label>
                       <div class="form-check form-check-inline">
-                          <input class="form-control" type="checkbox" name="checkbox" value="yes" style="width: 30px; height: 30px;" {{ ($transaction->business_info->tax_incentive == null ?: ($transaction->business_info->tax_incentive == "no" ? '' : 'checked')) }}>
+                          <input class="form-control form-control-sm tax_entity" type="checkbox" name="checkbox" value="yes" style="width: 30px; height: 30px;" {{ in_array($transaction->business_info->tax_incentive, ['', 'no']) ?: 'checked' }}>
                           <label class="my-2 mx-1" for="inlineCheckbox1">YES</label>
                       </div>
                       <div class="form-check form-check-inline">
-                          <input class="form-control" type="checkbox" name="checkbox" value="no" style="width: 30px; height: 30px;" {{ $transaction->business_info->tax_incentive == "no" ? 'checked' : " " }}>
+                          <input class="form-control form-control-sm" type="checkbox" name="checkbox" value="no" style="width: 30px; height: 30px;" {{ $transaction->business_info->tax_incentive == 'no' ? 'checked' : $transaction->business_info->tax_incentive }}>
                           <label class="my-2 mx-1" for="inlineCheckbox3">NO</label>
                       </div>
                   </div>
               </div>
 
               <div class="col-md-6">
-                  <div class="form-group" id="checkYes">
+                  <div class="form-group" style="{{ !in_array($transaction->business_info->tax_incentive, ['', 'no']) ?: 'display:none;' }}" id="checkYes">
                       <label class="text-form pb-2">Please Specify entity:</label>
                       <input type="text" class="form-control" name="business_info[tax_incentive]" value="{{$transaction->business_info->tax_incentive != 'no' ? $transaction->business_info->tax_incentive : ' '}}">
                   </div>
@@ -650,62 +650,105 @@
 <script src="http://maps.google.com/maps/api/js?v=3&libraries=places&key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
 <script type="text/javascript">
 
+  $.fn.get_region = function (input_region, input_province, input_city, input_brgy, selected) {
+
+    $(input_city).empty().prop('disabled', true)
+    $(input_brgy).empty().prop('disabled', true)
+
+    $(input_region).append($('<option>', {
+        value: "",
+        text: "Loading Content..."
+    }));
+    $.getJSON("{{env('PSGC_REGION_URL')}}", function (response) {
+        $(input_region).empty().prop('disabled', true)
+        $.each(response.data, function (index, value) {
+            $(input_region).append($('<option>', {
+                value: index,
+                text: value
+            }));
+        })
+
+        $(input_region).prop('disabled', true)
+        $(input_region).prepend($('<option>', {
+            value: "",
+            text: "--Select Region--"
+        }))
+        if (selected.length > 0) {
+            $(input_region).val($(input_region + " option[value=" + selected + "]").val());
+        } else {
+            $(input_region).val($(input_region + " option:first").val());
+        }
+    });
+        // return result;
+  };
+
+  $.fn.get_city = function (reg_code, input_city, input_brgy, selected) {
+    $(input_brgy).empty().prop('disabled', true)
+    $(input_city).append($('<option>', {
+        value: "",
+        text: "Loading Content..."
+    }));
+    $.getJSON("{{env('PSGC_CITY_URL')}}?region_code=" + reg_code, function (data) {
+        console.log(data)
+        $(input_city).empty().prop('disabled', true)
+        $.each(data, function (index, value) {
+            $(input_city).append($('<option>', {
+                value: index,
+                text: value
+            }));
+        })
+
+        $(input_city).prop('disabled', true)
+        $(input_city).prepend($('<option>', {
+            value: "",
+            text: "--SELECT MUNICIPALITY/CITY, PROVINCE--"
+        }))
+        if (selected.length > 0) {
+            $(input_city).val($(input_city + " option[value=" + selected + "]").val());
+        } else {
+            $(input_city).val($(input_city + " option:first").val());
+        }
+    });
+        // return result;
+  };
+
   $.fn.get_brgy = function (munc_code, input_brgy, selected) {
     $(input_brgy).empty().prop('disabled', true);
     $(input_brgy).append($('<option>', {
-      value: "",
-      text: "Loading Content..."
+        value: "",
+        text: "Loading Content..."
     }));
     $.getJSON("{{env('PSGC_BRGY_URL')}}?city_code=" + munc_code, function (data) {
-      $(input_brgy).empty().prop('disabled', true);
+        $(input_brgy).empty().prop('disabled', true);
 
-      $.each(data, function (index, value) {
-        $(input_brgy).append($('<option>', {
-          value: index,
-          text: value.desc,
-          "data-zip_code": (value.zip_code).trim()
-        }));
-      })
-      $(input_brgy).prop('disabled', false)
-      if(input_brgy == '#input_lessor_brgy'){
+        $.each(data, function (index, value) {
+            $(input_brgy).append($('<option>', {
+                value: index,
+                text: value.desc,
+                "data-zip_code": (value.zip_code).trim()
+            }));
+        })
+        $(input_brgy).prop('disabled', false)
         $(input_brgy).prepend($('<option>', {
-          value: "{!!  $transaction->business_info->lessor_brgy !!}",
-          text: "{!! $transaction->business_info->lessor_brgy_name !!}"
+            value: "",
+            text: "--SELECT BARANGAY--"
         }))
-      }else if(input_brgy == '#input_owner_brgy'){
-        var _old = "{!!  $transaction->business_info->owner_brgy !!}";
-        if(_old != null){
-          $(input_brgy).prepend($('<option>', {
-            value: "{!!  $transaction->business_info->owner_brgy !!}",
-            text: "{!! $transaction->business_info->owner_brgy_name !!}"
-          }))
-        }
-      }else{
-        $(input_brgy).prepend($('<option>', {
-          value: "{!!  $transaction->business_info->brgy !!}",
-          text: "{!! $transaction->business_info->brgy_name !!}"
-        }))
-      }
-      if (selected.length > 0) {
-        $(input_brgy).val($(input_brgy + " option[value=" + selected + "]").val());
 
-        if (typeof $(input_brgy + " option[value=" + selected + "]").data('zip_code') === undefined) {
-          $(input_brgy.replace("brgy", "zipcode")).val("")
+        if (selected.length > 0) {
+            $(input_brgy).val($(input_brgy + " option[value=" + selected + "]").val());
+
+            if (typeof $(input_brgy + " option[value=" + selected + "]").data('zip_code') === undefined) {
+                $(input_brgy.replace("brgy", "zipcode")).val("")
+            } else {
+                $(input_brgy.replace("brgy", "zipcode")).val($(input_brgy + " option[value=" + selected + "]").data('zip_code'))
+            }
+
         } else {
-          $(input_brgy.replace("brgy", "zipcode")).val($(input_brgy + " option[value=" + selected + "]").data('zip_code'))
+            $(input_brgy).val($(input_brgy + " option:first").val());
         }
-      }else {
-        $(input_brgy).val($(input_brgy + " option:first").val());
-          // only show select barangay if we it's for owner detail input
-        if(input_brgy == "#input_owner_brgy"){
-          $(input_brgy).prepend($('<option>', {
-          value: "",
-          text: " --- SELECT BARANGAY --- "
-          }))
-        }
-      }
     });
   }
+
   
   $(function(){
     load_lessor_barangay();
@@ -749,24 +792,21 @@
       }
     });
 
+    $('input[name="has_septic_tank"]').on('change', function () {
+      $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+    });
+
     $('input[name="checkbox"]').on('change', function () {
       $('input[name="checkbox"]').not(this).prop('checked', false);
+
       if($(this).val() == 'yes'){
-        $('input[name="business_info[tax_incentive]"]').val('');
-        $('#checkYes').show();
+          $('input[name="tax_incentive"]').val('');
+          $('#checkYes').show();
       }
       if($(this).val() == 'no'){
-        $('#checkYes').hide();
-        $('input[name="business_info[tax_incentive]"]').val('no');
+          $('#checkYes').hide();
+          $('input[name="tax_incentive"]').val('no');
       }
-    });
-    @if($transaction->business_info->tax_incentive == "no" || !$transaction->business_info->tax_incentive)
-      $('#checkYes').hide();
-    @else
-      $('#checkYes').show();
-    @endif
-    $('.input-daterange').datepicker({
-      format : "yyyy-mm-dd"
     });
 
 
@@ -784,27 +824,38 @@
     });
 
     function load_lessor_barangay() {
-        var _val = "097332000";
-        var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
-        $(this).get_brgy(_val, "#input_lessor_brgy", "");
-        $('#input_lessor_zipcode').val('');
-        $('#input_lessor_town_name').val(_text);
+      var _val = "030803000";
+      var _text = "BATAAN - CITY OF BALANGA";
+      $(this).get_brgy(_val, "#input_lessor_brgy", "");
+      $('#input_lessor_zipcode').val('');
+      $('#input_lessor_town_name').val(_text);
     }
 
     function load_owner_barangay() {
-        var _val = "097332000";
-        var _text = "ZAMBOANGA DEL SUR - CITY OF ZAMBOANGA";
-        $(this).get_brgy(_val, "#input_owner_brgy", "");
+      var _val = "030803000";
+      var _text = "BATAAN - CITY OF BALANGA";
+      $(this).get_brgy(_val, "#input_owner_brgy", "");
     }
 
-    $('input[name="business_info[has_septic_tank]"]').on('change', function () {
-      $('input[name="business_info[has_septic_tank]"]').not(this).prop('checked', false);
+    $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
+    $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
+    $(this).get_brgy('030803000', "#input_lessor_brgy", "{{ $transaction->business_info->lessor_brgy }}");
+    $(this).get_brgy('030803000', "#input_owner_brgy", "{{ $transaction->business_info->owner_brgy }}");
+
+    $("#input_lessor_region").on("change", function () {
+      var _val = $(this).val();
+      var _text = $("#input_lessor_region option:selected").text();
+      $(this).get_city($("#input_lessor_region").val(), "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
+      $('#input_zipcode').val('');
+      $('#input_region_name').val(_text);
     });
 
-    $("#input_brgy").on("change", function () {
-      $('#input_zipcode').val($(this).find(':selected').data('zip_code'))
-      var _text = $("#input_brgy option:selected").text();
-      $('#input_brgy_name').val(_text);
+    $("#input_lessor_town").on("change", function () {
+      var _val = $(this).val();
+      var _text = $("#input_lessor_town option:selected").text();
+      $(this).get_brgy($("#input_lessor_town").val(), "#input_lessor_brgy", "");
+      $('#input_lessor_zipcode').val('');
+      $('#input_lessor_town_name').val(_text);
     });
 
     $("#input_lessor_brgy").on("change", function () {
@@ -812,16 +863,9 @@
       var _text = $("#input_lessor_brgy option:selected").text();
       $('#input_lessor_brgy_name').val(_text);
     });
-
     $("#input_owner_brgy").on("change", function () {
-      $('#input_lessor_zipcode').val($(this).find(':selected').data('zip_code'))
       var _text = $("#input_owner_brgy option:selected").text();
-      var _val =  $("#input_owner_brgy option:selected").val();
-      if(_val != ''){
-          $('#input_owner_brgy_name').val(_text);
-      }else{
-          $('#input_owner_brgy_name').val('')
-      }
+      $('#input_owner_brgy_name').val(_text);
     });
   });
 </script>
