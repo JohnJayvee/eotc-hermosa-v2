@@ -842,20 +842,33 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
                 $(input_brgy.replace("brgy", "zipcode")).val($(input_brgy + " option[value=" + selected + "]").data('zip_code'))
             }
 
-        } else {
-            $(input_brgy).val($(input_brgy + " option:first").val());
-        }
+            } else {
+                $(input_brgy).val($(input_brgy + " option:first").val());
+            }
     });
 }
 
-$( "#create_form" ).submit(function( event ) {
-    $("#input_lessor_region").prop( "disabled", false );
-    $("#input_lessor_town").prop( "disabled", false );
-});   
+    $( "#create_form" ).submit(function( event ) {
+        $("#input_lessor_region").prop( "disabled", false );
+        $("#input_lessor_town").prop( "disabled", false );
+    });   
     
     $(function () {
         $('input[name="has_septic_tank"]').on('change', function () {
             $('input[name="has_septic_tank"]').not(this).prop('checked', false);
+        });
+
+        $('input[name="checkbox"]').on('change', function () {
+            $('input[name="checkbox"]').not(this).prop('checked', false);
+
+            if($(this).val() == 'yes'){
+                $('input[name="tax_incentive"]').val('');
+                $('#checkYes').show();
+            }
+            if($(this).val() == 'no'){
+                $('#checkYes').hide();
+                $('input[name="tax_incentive"]').val('no');
+            }
         });
 
         $('#buttonID').click(function(){
