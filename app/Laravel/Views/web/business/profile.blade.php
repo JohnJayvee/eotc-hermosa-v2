@@ -25,7 +25,7 @@
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
                                     <a class="dropdown-item" href="{{route('web.business.history',[$profile->id])}}">Application History</a>
                                     <a class="dropdown-item" href="{{route('web.business_payment.index',[$profile->id])}}">Business Payment</a>
-                                    <a class="dropdown-item action-delete" data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}" href="#">Delete Business CV</a>
+                                    <a class="dropdown-item btn-delete" data-removable="{{ $profile->for_removal ? 'true' : 'false' }}" data-url="{{route('web.business.delete',[$profile->id])}}" href="#">Delete Business CV</a>
                                 </div>
                             </div>
                         </div>
