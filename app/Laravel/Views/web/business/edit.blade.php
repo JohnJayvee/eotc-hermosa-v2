@@ -266,7 +266,7 @@
                                 </div>
                             </div>
                             <input type="hidden" class="form-control" name="lessor_region_name" id="input_lessor_region_name" value="{{old('lessor_region_name', 'REGION III (CENTRAL LUZON)')}}">
-                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'BATAAN - CITY OF BALANGA')}}">
+                            <input type="hidden" class="form-control" name="lessor_town_name" id="input_lessor_town_name" value="{{old('lessor_town_name', 'BATAAN - HERMOSA')}}">
                             <input type="hidden" class="form-control" name="lessor_brgy_name" id="input_lessor_brgy_name" value="{{old('lessor_brgy_name', $business->lessor_brgy_name)}}">
                             <h5 class="text-title text-uppercase">Owners Information</h5>
                             <div class="row">
@@ -895,23 +895,23 @@
             }
         });
         function load_lessor_barangay() {
-            var _val = "030803000";
-            var _text = "BATAAN - CITY OF BALANGA";
+            var _val = "030805000";
+            var _text = "BATAAN - HERMOSA";
             $(this).get_brgy(_val, "#input_lessor_brgy", "");
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
         }
       
         function load_owner_barangay() {
-            var _val = "030803000";
-            var _text = "BATAAN - CITY OF BALANGA";
+            var _val = "030805000";
+            var _text = "BATAAN - HERMOSA";
             $(this).get_brgy(_val, "#input_owner_brgy", "");
         }
 
         $(this).get_region("#input_lessor_region", "#input_lessor_province", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_region', '030000000')}}")
-        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030803000')}}");
-        $(this).get_brgy('030803000', "#input_lessor_brgy", "{{ $business->lessor_brgy }}");
-        $(this).get_brgy('030803000', "#input_owner_brgy", "{{ $business->owner_brgy }}");
+        $(this).get_city("030000000", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town', '030805000')}}");
+        $(this).get_brgy('030805000', "#input_lessor_brgy", "{{ $business->lessor_brgy }}");
+        $(this).get_brgy('030805000', "#input_owner_brgy", "{{ $business->owner_brgy }}");
 
         $("#input_lessor_region").on("change", function () {
             var _val = $(this).val();
