@@ -377,7 +377,6 @@ class BusinessTransactionController extends Controller
         $business_transaction->save();
     }
 
-
 	public function process($id = NULL,PageRequest $request){
 		$d1 = new Carbon('01/20');
 		$d2 = new Carbon('04/20');
@@ -400,99 +399,7 @@ class BusinessTransactionController extends Controller
             $transaction->application_permit->save();
 
 			if ($type == "APPROVED") {
-				$regulatory_fee = BusinessFee::where('transaction_id', $id)->where('fee_type' , 0)->get();
-			    $business_tax = BusinessFee::where('transaction_id', $id)->where('fee_type' , 1)->first();
-			    $garbage_fee = BusinessFee::where('transaction_id', $id)->where('fee_type' , 2)->get();
-
-				/*if (count($regulatory_fee) == 0 || !$business_tax ) {
-
-					session()->flash('notification-status', "failed");
-					session()->flash('notification-msg', "Cannot approved transaction with incomplete assessment");
-					return redirect()->route('system.business_transaction.show',[$id]);
-				}
-				*/
-
-			    if ($regulatory_fee) {
-			    	$business_fee_id = [];
-			    	$total_amount = 0;
-			    	foreach ($regulatory_fee as $key => $value) {
-			    		array_push($business_fee_id, $value->id);
-			    		$total_amount += Helper::db_amount($value->amount);
-
-			    	}
-			    	$new_regulatory_payment = new RegulatoryPayment();
-			    	$new_regulatory_payment->business_fee_id = implode(",", $business_fee_id);
-			    	$new_regulatory_payment->transaction_id = $id;
-			    	$new_regulatory_payment->amount = $total_amount;
-			    	$new_regulatory_payment->save();
-			    	$new_regulatory_payment->transaction_code = 'RF-' . Helper::date_format(Carbon::now(), 'ym') . str_pad($new_regulatory_payment->id, 5, "0", STR_PAD_LEFT) . Str::upper(Str::random(3));
-			    	$new_regulatory_payment->save();
-			    }
-			    if ($business_tax) {
-			    	$amount = $business_tax ? $business_tax->amount / 4 : 0 ;
-			    	for ($i=0; $i < 4; $i++) {
-			    		switch ($i + 1) {
-			    			case '1':
-			    				$due_date = Carbon::now()->year.$d1->format('-m-d');
-			    				break;
-			    			case '2':
-			    				$due_date = Carbon::now()->year.$d2->format('-m-d');
-			    				break;
-			    			case '3':
-			    				$due_date = Carbon::now()->year.$d3->format('-m-d');
-			    				break;
-			    			case '4':
-			    				$due_date = Carbon::now()->year.$d4->format('-m-d');
-			    				break;
-			    			default:
-			    				break;
-			    		}
-			    		$business_tax_payment  = new BusinessTaxPayment();
-			    		$business_tax_payment->business_fee_id =  $business_tax->id;
-			    		$business_tax_payment->transaction_id = $id;
-			    		$business_tax_payment->quarter = $i + 1;
-			    		$business_tax_payment->fee_type = 1;
-			    		$business_tax_payment->amount = $amount;
-			    		$business_tax_payment->surcharge = $amount * .25;
-			    		$business_tax_payment->due_date = $due_date;
-			    		$business_tax_payment->save();
-				    	$business_tax_payment->transaction_code = 'BT-' . Helper::date_format(Carbon::now(), 'ym') . str_pad($business_tax_payment->id, 5, "0", STR_PAD_LEFT) . Str::upper(Str::random(3));
-				    	$business_tax_payment->save();
-			    	}
-			    }
-			    if ($garbage_fee and $business_tax) {
-			    	$amount = $business_tax ? $business_tax->amount / 4 : 0 ;
-			    	for ($i=0; $i < 4; $i++) {
-			    		switch ($i + 1) {
-			    			case '1':
-			    				$due_date = Carbon::now()->year.$d1->format('-m-d');
-			    				break;
-			    			case '2':
-			    				$due_date = Carbon::now()->year.$d2->format('-m-d');
-			    				break;
-			    			case '3':
-			    				$due_date = Carbon::now()->year.$d3->format('-m-d');
-			    				break;
-			    			case '4':
-			    				$due_date = Carbon::now()->year.$d4->format('-m-d');
-			    				break;
-			    			default:
-			    				break;
-			    		}
-			    		$business_tax_payment  = new BusinessTaxPayment();
-			    		$business_tax_payment->business_fee_id =  $business_tax->id;
-			    		$business_tax_payment->transaction_id = $id;
-			    		$business_tax_payment->quarter = $i + 1;
-			    		$business_tax_payment->fee_type = 2;
-			    		$business_tax_payment->amount = $amount;
-			    		$business_tax_payment->surcharge = $amount * .25;
-			    		$business_tax_payment->due_date = $due_date;
-			    		$business_tax_payment->save();
-				    	$business_tax_payment->transaction_code = 'GF-' . Helper::date_format(Carbon::now(), 'ym') . str_pad($business_tax_payment->id, 5, "0", STR_PAD_LEFT) . Str::upper(Str::random(3));
-				    	$business_tax_payment->save();
-			    	}
-			    }
-
+				
 			    $insert[] = [
 	            	'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
 	            	'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
@@ -507,20 +414,18 @@ class BusinessTransactionController extends Controller
 			    Event::dispatch('send-email-business-approved', $notification_data_email);
 
 			} else {
-                $insert = [];
-                foreach(json_decode($transaction->department_remarks) as $value) {
-                    $insert[] = [
-                        'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
-                        'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
-                        'amount' => $transaction->total_amount,
-                        'ref_num' => $transaction->code,
-                        'full_name' => $transaction->owner ? $transaction->owner->full_name : $transaction->business_name,
-                        'application_name' => $transaction->application_name,
-                        'modified_at' => Helper::date_only($transaction->modified_at),
-                        'department_name' => Helper::department_name($value->id),
-                        'remarks' =>  $transaction->remarks,
-                    ];
-                }
+           
+                $insert[] = [
+                    'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
+                    'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
+                    'amount' => $transaction->total_amount,
+                    'ref_num' => $transaction->code,
+                    'full_name' => $transaction->owner ? $transaction->owner->full_name : $transaction->business_name,
+                    'application_name' => $transaction->application_name,
+                    'modified_at' => Helper::date_only($transaction->modified_at),
+                    'department_name' => Helper::department_name($value->id),
+                    'remarks' =>  $transaction->remarks,
+                ];
 
                 $notification_data_email = new SendEmailDeclinedBusiness($insert);
                 Event::dispatch('send-email-business-declined', $notification_data_email);
@@ -622,7 +527,6 @@ class BusinessTransactionController extends Controller
 	}
 
 	public function bplo_validate($id = NULL , PageRequest $request){
-
 		DB::beginTransaction();
 		try{
 			$status_type = $request->get('status_type');
@@ -731,7 +635,6 @@ class BusinessTransactionController extends Controller
 
 	public function get_assessment(AssessmentRequest $request , $id = NULL){
 		DB::beginTransaction();
-
 		try{
 
 			$auth = Auth::user();

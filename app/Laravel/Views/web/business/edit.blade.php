@@ -378,7 +378,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">First Name</label>
-                                        <input type="text" class="form-control form-control-sm {{ $errors->first('rep_firstname') ? 'is-invalid': NULL  }}"  name="rep_firstname" value="{{old('rep_firstname', $business->rep_lastname) }}">
+                                        <input type="text" class="form-control form-control-sm {{ $errors->first('rep_firstname') ? 'is-invalid': NULL  }}"  name="rep_firstname" value="{{old('rep_firstname', $business->rep_firstname) }}">
                                         @if($errors->first('rep_firstname'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('rep_firstname')}}</small>
                                         @endif

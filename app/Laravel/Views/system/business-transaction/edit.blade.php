@@ -532,17 +532,18 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
-              <div class="form-group my-1">
-                <label for="exampleInputEmail1" class="text-form">Lessor Region</label>
-                <input type="text" class="form-control {{ $errors->first('business_info.lessor_region_name') ? 'is-invalid': NULL  }}"  name="business_info[lessor_region_name]" value="{{old('business_info.lessor_region_name',strtoupper($transaction->business_info->lessor_region_name) ?? '') }}" disabled>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+              <div class="form-group">
+              <label for="exampleInputEmail1" class="text-form">Region</label>
+                  {!!Form::select('business_info[lessor_region]',[],old('lessor_region'),['id' => "input_lessor_region",'class' => "form-control classic ".($errors->first('lessor_region') ? 'border-red' : NULL)])!!}
               </div>
             </div>
+           
             <div class="col-md-6">
-              <div class="form-group my-1">
-                <label for="exampleInputEmail1" class="text-form">Lessor Province/Town</label>
-                <input type="text" class="form-control {{ $errors->first('business_info.lessor_town_name') ? 'is-invalid': NULL  }}"  name="business_info[lessor_town_name]" value="{{old('business_info.lessor_town_name', $transaction->business_info->lessor_town_name ?? '') }}" disabled>
-              </div>
+               <div class="form-group">
+                  <label for="exampleInputEmail1" class="text-form">Lessor Province/Town</label>
+                  {!!Form::select('business_info[lessor_town]',[],old('lessor_town'),['id' => "input_lessor_town",'class' => "form-control classic ".($errors->first('lessor_town') ? 'border-red' : NULL)])!!}
+                </div>
             </div>
           </div>
           <input type="hidden" class="form-control" name="business_info[lessor_brgy_name]" id="input_lessor_brgy_name" value="{{old('business_info.lessor_brgy_name' ,  $transaction->business_info->lessor_brgy_name )}}">
