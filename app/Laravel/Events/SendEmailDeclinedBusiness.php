@@ -33,8 +33,6 @@ class SendEmailDeclinedBusiness extends Event {
 			$this->data['application_name'] = $value['application_name'];
 			$this->data['ref_num'] = $value['ref_num'];
 			$this->data['modified_at'] = $value['modified_at'];
-			$this->data['amount'] = $value['amount'];
-			$this->data['department_name'] = $value['department_name'];
             $this->data['remarks'] = $value['remarks'];
             // $pdf = PDF::loadView('pdf.business-declined', $this->data);
 			Mail::send('emails.business-declined', $this->data, function($message) use ($mailname,$user_email){

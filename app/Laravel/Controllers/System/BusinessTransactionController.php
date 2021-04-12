@@ -378,11 +378,7 @@ class BusinessTransactionController extends Controller
     }
 
 	public function process($id = NULL,PageRequest $request){
-		$d1 = new Carbon('01/20');
-		$d2 = new Carbon('04/20');
-		$d3 = new Carbon('07/20');
-		$d4 = new Carbon('10/20');
-
+		
 		$type = strtoupper($request->get('status_type'));
 		DB::beginTransaction();
 		try{
@@ -418,14 +414,13 @@ class BusinessTransactionController extends Controller
                 $insert[] = [
                     'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
                     'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
-                    'amount' => $transaction->total_amount,
                     'ref_num' => $transaction->code,
                     'full_name' => $transaction->owner ? $transaction->owner->full_name : $transaction->business_name,
                     'application_name' => $transaction->application_name,
                     'modified_at' => Helper::date_only($transaction->modified_at),
-                    'department_name' => Helper::department_name($value->id),
-                    'remarks' =>  $transaction->remarks,
+                    'remarks' =>  $request->get('remarks'),
                 ];
+
 
                 $notification_data_email = new SendEmailDeclinedBusiness($insert);
                 Event::dispatch('send-email-business-declined', $notification_data_email);
