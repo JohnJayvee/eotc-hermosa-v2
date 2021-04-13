@@ -35,7 +35,7 @@
     <div class="container mt-3" style="box-sizing: border-box;width: 100%;padding-right: 15px;padding-left: 15px;margin-right: auto;margin-left: auto;margin-top: 1rem!important;min-width: 992px!important;">
         <div class="row d-flex justify-content-between" style="box-sizing: border-box;display: flex!important;-ms-flex-wrap: wrap;flex-wrap: wrap;margin-right: -15px;margin-left: -15px;-ms-flex-pack: justify!important;justify-content: space-between!important;">
             <div class="logo-left" style="box-sizing: border-box;">
-                <img src="/web/img/business_permit/ZamboSeal.png" alt="" class="img-logo" style="box-sizing: border-box;vertical-align: middle;border-style: none;page-break-inside: avoid;width: 92px;height: 92px;">
+                <img src="/web/img/hermosa-seal.png" alt="" class="img-logo" style="box-sizing: border-box;vertical-align: middle;border-style: none;page-break-inside: avoid;width: 92px;height: 92px;">
                 <div class="group" style="box-sizing: border-box;">
                     <p class="text-warning" style="box-sizing: border-box;margin-top: 5px;margin-bottom: 0px;orphans: 3;widows: 3;text-align: center;font-weight: 600;font-size: 23px;color: #ffc107!important;">17-23635R</p>
                     <label for="" style="box-sizing: border-box;display: inline-block;margin-bottom: .5rem;">Permit Number</label>

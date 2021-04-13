@@ -35,7 +35,7 @@
     <div class="container mt-3">
         <div class="row d-flex justify-content-between">
             <div class="logo-left">
-                <img src="/web/img/business_permit/ZamboSeal.png" alt="" class="img-logo">
+                <img src="/web/img/hermosa-seal.png" alt="" class="img-logo">
                 <div class="group">
                     <p class="text-warning">17-23635R</p>
                     <label for="">Permit Number</label>
