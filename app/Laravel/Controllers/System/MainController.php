@@ -160,7 +160,6 @@ class MainController extends Controller{
 			$this->data['per_month_application'] = json_encode($per_month_application);
 			$this->data['label_data'] = json_encode($this->data['labels']);
 			$this->data['chart_data'] = json_encode($this->data['transaction_per_application']);
-
 		}
 
 

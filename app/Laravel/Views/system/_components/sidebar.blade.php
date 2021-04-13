@@ -76,12 +76,12 @@
 
       </div>
     </li>
-    <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.other_customer.index','system.other_customer.create','system.other_transaction.index','system.other_transaction.show','system.other_customer.show','system.other_transaction.create')) ? 'active' : ''}}">
+    {{-- <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.other_customer.index','system.other_customer.create','system.other_transaction.index','system.other_transaction.show','system.other_customer.show','system.other_transaction.create')) ? 'active' : ''}}">
       <a class="nav-link" href="{{route('system.other_customer.index')}}">
         <i class="fa fa-file menu-icon"></i>
         <span class="menu-title">Local Record</span>
       </a>
-    </li>
+    </li> --}}
     @if(in_array($auth->type,['super_user','admin','office_head']))
       @if(in_array($auth->type,['super_user','admin']))
         <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.business_cv.index', 'system.business_cv.create', 'system.business_cv.show')) ? 'active' : ''}}">
@@ -135,12 +135,12 @@
             <span class="menu-title">Reporting</span>
           </a>
         </li> --}}
-        <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.holiday.index','system.holiday.create','system.holiday.edit')) ? 'active' : ''}}">
+        {{-- <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.holiday.index','system.holiday.create','system.holiday.edit')) ? 'active' : ''}}">
           <a class="nav-link" href="{{route('system.holiday.index')}}">
             <i class="fa fa-calendar-check menu-icon"></i>
             <span class="menu-title">Holiday</span>
           </a>
-        </li>
+        </li> --}}
         <li class="p-3 nav-item {{ in_array(Route::currentRouteName(), array('system.processor.index','system.processor.create','system.processor.edit','system.processor.reset')) ? 'active' : ''}}">
           <a class="nav-link" href="{{route('system.processor.index')}}">
             <i class="fa fa-user-plus menu-icon"></i>
