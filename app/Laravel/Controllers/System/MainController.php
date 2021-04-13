@@ -119,13 +119,14 @@ class MainController extends Controller{
 
 		}elseif ($auth->type == "processor") {
 
-			$this->data['applications'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->orderBy('created_at',"DESC")->get();
-			$this->data['pending'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->where('status',"PENDING")->count();
-			$this->data['approved'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->where('status',"APPROVED")->count();
-			$this->data['declined'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->where('status',"DECLINED")->count();
-			$this->data['application_today'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->whereDate('created_at', Carbon::now())->count();
-            $this->data['validated'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->where('is_validated',"1")->count();
-            $this->data['for_bplo'] = BusinessTransaction::whereIn('application_id',explode(",", $auth->application_id))->where('for_bplo_approval',"1")->count();
+			$this->data['applications'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->orderBy('created_at',"DESC")->get();
+			$this->data['pending'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->where('status',"PENDING")->count();
+			$this->data['approved'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->where('status',"APPROVED")->count();
+			$this->data['declined'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->where('status',"DECLINED")->count();
+
+			$this->data['application_today'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->whereDate('created_at', Carbon::now())->count();
+            $this->data['validated'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->where('is_validated',"1")->count();
+            $this->data['for_bplo'] = BusinessTransaction::whereJsonContains('department_involved',$auth->department->code)->where('for_bplo_approval',"1")->count();
 			$this->data['business_cv'] = Business::count();
 
 			$this->data['labels'] = Application::where('department_id',$auth->department_id)->pluck('name')->toArray();
