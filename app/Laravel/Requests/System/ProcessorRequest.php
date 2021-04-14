@@ -14,7 +14,7 @@ class ProcessorRequest extends RequestManager{
 			'type' => "required",
 			'contact_number' => "required|max:10|phone:PH",
 			'email'	=> "required|unique:user,email,{$id}",
-			'username'	=> "required|unique:user,username,{$id}",
+			'username'	=> "required|min:6|max:255|unique:user,username,{$id}",
 			// 'file' => 'required|mimes:jpeg,jpg,png,JPEG,PNG|max:204800',
 		];
 
