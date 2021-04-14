@@ -71,7 +71,9 @@
               <button type="button" class="btn btn-sm p-0" data-toggle="dropdown" style="background-color: transparent;"> <i class="mdi mdi-dots-horizontal" style="font-size: 30px"></i></button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
                 <a class="dropdown-item" href="{{route('system.bplo.edit',[$customers->id])}}">Edit registrant</a>
-                <a class="dropdown-item action-delete"  data-url="{{route('system.bplo.destroy',[$customers->id])}}" data-toggle="modal" data-target="#confirm-delete">Remove Record</a>
+                @if($customers->status == 'declined')
+                    <a class="dropdown-item action-delete"  data-url="{{route('system.bplo.destroy',[$customers->id])}}" data-toggle="modal" data-target="#confirm-delete">Remove Record</a>
+                @endif
               </div>
             </td>
           </tr>
