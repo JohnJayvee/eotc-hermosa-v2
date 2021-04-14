@@ -156,9 +156,19 @@ class BPLOController extends Controller
 
 
 	public function  destroy(PageRequest $request,$id = NULL){
+        $customer = Customer::findOrFail($id);
+
+        if($customer->status != 'declined'){
+            session()->flash('notification-status', 'failed');
+            session()->flash('notification-msg', 'Registrant was not removed. Only declined registrants can be removed.');
+
+            return redirect()->back();
+        }
+
 		DB::beginTransaction();
+
 		try{
-			Customer::find($id)->delete();
+			$customer->delete();
 			DB::commit();
 			session()->flash('notification-status', "success");
 			session()->flash('notification-msg', "Collection removed successfully.");
