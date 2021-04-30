@@ -46,7 +46,7 @@ $factory->define(Customer::class, function (Faker $faker) {
     foreach ($files as $file) {
         $originalName = $file->getClientOriginalName();
 
-        $uploadedImage = ImageUploader::upload($file, 'uploads/customer/file/' . $customer->id);
+        $uploadedImage = ImageUploader::upload($file, 'public/uploads/customer/file/' . $customer->id);
 
         CustomerFile::create([
             'path' => $uploadedImage['path'],
