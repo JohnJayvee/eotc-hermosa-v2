@@ -242,7 +242,7 @@
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control form-control-sm {{ $errors->first('email') ? 'is-invalid': NULL  }}"  name="email" value="{{old('email', $business['BusEmailAddress'] ?? '') }}">
+                                        <input type="email" class="form-control form-control-sm {{ $errors->first('email') ? 'is-invalid': NULL  }}"  name="email" value="{{old('email', Auth::guard('customer')->user()->email ?? '') }}">
                                         @if($errors->first('email'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('email')}}</small>
                                         @endif
@@ -266,8 +266,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text text-title fw-600">+63 <span class="pr-1 pl-2" style="padding-bottom: 2px"> |</span></span>
                                             </div>
-                                            <input type="number" class="form-control {{ $errors->first('mobile_no') ? 'is-invalid': NULL  }} br-left-white" name="mobile_no" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" placeholder="Contact Number" value="{{old('mobile_no', $business['BusTelNo'] ?? '')}}">
-
+                                            <input type="number" class="form-control {{ $errors->first('mobile_no') ? 'is-invalid': NULL  }} br-left-white" name="mobile_no" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" placeholder="Contact Number" value="{{old('mobile_no', Str::replaceFirst('+63', '', Auth::guard('customer')->user()->contact_number) ?? '')}}">
                                         </div>
                                         @if($errors->first('mobile_no'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('mobile_no')}}</small>
