@@ -890,8 +890,12 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
 
         $('#map').locationpicker({
           location: {
+            latitude: 14.8271,
+            longitude: 120.4196
+
+            /* balanga - bataan
             latitude: 14.6741,
-            longitude: 120.5113
+            longitude: 120.5113 */
           },
           zoom: 15,
           radius: 0,
