@@ -42,7 +42,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                {{-- <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Dominant Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm {{ $errors->first('dominant_name') ? 'is-invalid': NULL  }}"  name="dominant_name" value="{{old('dominant_name', $business['BusinessName'] ?? '') }}">
@@ -50,7 +50,7 @@
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('dominant_name')}}</small>
                                         @endif
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Business Name <span class="text-danger">*</span></label>
@@ -60,9 +60,7 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Trade name / Franchise <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control form-control-sm {{ $errors->first('trade_name') ? 'is-invalid': NULL  }}"  name="trade_name" value="{{old('trade_name', $business['TradeName'] ?? '') }}">
@@ -108,8 +106,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">Business TIN.<span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control form-control-sm {{ $errors->first('business_tin') ? 'is-invalid': NULL  }}"  name="business_tin" value="{{old('business_tin', $business['TIN'] ?? '') }}">
+                                        <label for="business_tin" class="text-form pb-2" >
+                                            Business TIN.
+                                            <input type="checkbox" id="has_business_tin" name="has_business_tin" value="1" {{ old('has_business_tin') ? 'checked' : '' }} class="form-check-input ml-2" />
+                                        </label>
+                                        <input id="business_tin" type="number" class="form-control form-control-sm {{ $errors->first('business_tin') ? 'is-invalid': NULL  }}"  name="business_tin" value="{{old('business_tin', $business['TIN'] ?? '') }}" disabled>
                                         @if($errors->first('business_tin'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('business_tin')}}</small>
                                         @endif
@@ -737,7 +738,7 @@
   }
    #map {
     height: 400px !important;
-    width: 100% !important; 
+    width: 100% !important;
   }
 </style>
 @endsection
@@ -851,8 +852,8 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
     $( "#create_form" ).submit(function( event ) {
         $("#input_lessor_region").prop( "disabled", false );
         $("#input_lessor_town").prop( "disabled", false );
-    });   
-    
+    });
+
     $(function () {
         $('input[name="has_septic_tank"]').on('change', function () {
             $('input[name="has_septic_tank"]').not(this).prop('checked', false);
@@ -885,7 +886,7 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
         $('#postcode').text( $("#map-address").val())
 
         function updateControls(addressComponents) {
-            $('#postcode').val(addressComponents.postalCode);       
+            $('#postcode').val(addressComponents.postalCode);
         }
 
         $('#map').locationpicker({
@@ -923,7 +924,7 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
         }
-      
+
         function load_owner_barangay() {
             var _val = "030805000";
             var _text = "BATAAN - HERMOSA";
@@ -951,7 +952,7 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
             $('#input_lessor_town_name').val(_text);
         });
 
-       
+
 
         @if(strlen(old('lessor_region')) > 0)
         $(this).get_city("{{old('lessor_region')}}", "#input_lessor_town", "#input_lessor_brgy", "{{old('lessor_town')}}");
@@ -971,10 +972,22 @@ $.fn.get_brgy = function (munc_code, input_brgy, selected) {
             $('#input_owner_brgy_name').val(_text);
         });
 
-    })
+        $('#has_business_tin').on('change', function(){
+            if(!this.checked){
+                $('#business_tin').val('');
+            }
+
+            $('#business_tin').attr('disabled', !this.checked);
+        });
+
+        if($('#has_business_tin').is(':checked')){
+            $('#business_tin').attr('disabled', false);
+        }
+
+    });
 
 
-   
+
 
 </script>
 @endsection
