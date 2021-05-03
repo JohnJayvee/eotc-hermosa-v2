@@ -45,15 +45,17 @@ class BusinessPaymentController extends Controller
 			session()->flash('notification-msg', "No Transaction For this business Found.");
 			return redirect()->back();
 		}
-		
+
         $this->data['assessments'] = Assessment::where('transaction_id', $this->data['transaction']->id)->get();
 
         $cedula_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('cedula');
         $brgy_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('brgy_fee');
+        $totalAssessment = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('total_assessment');
         $bfp_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('bfp_fee');
-       
-        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $bfp_fee ; 
-       
+        $clearanceFee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('clearance_fee');
+
+        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $totalAssessment + $bfp_fee + $clearanceFee;
+
         return view('web.business.payment',$this->data);
     }
 
@@ -263,7 +265,7 @@ class BusinessPaymentController extends Controller
     public function download_assessment(PageRequest $request,$id=NULL){
 
         $this->data['transaction'] = BusinessTransaction::find($id);
-		
+
 		BusinessFee::where("transaction_id",$this->data['transaction']->id)->where("fee_type", 0)->get();
 
 		$this->data['regulatory_fees'] = BusinessFee::where('transaction_id', $this->data['transaction']->id)->where('fee_type', 0)->get();
@@ -293,14 +295,14 @@ class BusinessPaymentController extends Controller
 			->where('business_fee.transaction_id', $this->data['transaction']->id)
 			->where('business_fee.fee_type', 2)
 			->first();*/
-		
-       
-                                        
+
+
+
       	$pdf = PDF::loadView('pdf.business-permit-assessment-details',$this->data)->setPaper('a4', 'landscape');
 
         return $pdf->download("business-permit-assessment-details.pdf");
 
-      
+
         //return view('pdf.business-permit-assessment-details', $this->data);
     }
 }

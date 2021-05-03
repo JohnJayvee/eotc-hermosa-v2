@@ -30,8 +30,10 @@
                       <th class="text-title p-3">Assessment File</th>
                       <th class="text-title p-3">Cedula</th>
                       <th class="text-title p-3">Barangay Fee</th>
-                      <th class="text-title p-3">BFP Fee</th>
-                      <th class="text-title p-3">Total Amount</th>
+                      <th class="text-title p-3">Total Assessment</th>
+                      <th class="text-title p-3">FSI Fee</th>
+                      <th class="text-title p-3">Clearance Fee</th>
+                      {{-- <th class="text-title p-3">Total Amount</th> --}}
                     </tr>
                   </thead>
                   <tbody>
@@ -41,8 +43,10 @@
                          <td><a href="{{$value->directory}}/{{$value->filename}}" target="_blank">{{$value->original_name}}</a></td>
                          <td>{{Helper::money_format($value->cedula) ?: "N/A"}}</td>
                          <td>{{Helper::money_format($value->brgy_fee) ?: "N/A"}}</td>
+                         <td>{{Helper::money_format($value->total_assessment) ?: "N/A"}}</td>
                          <td>{{Helper::money_format($value->bfp_fee) ?: "N/A"}}</td>
-                         <td>{{Helper::money_format($value->total_amount) ?: "N/A"}}</td>
+                         <td>{{Helper::money_format($value->clearance_fee) ?: "N/A"}}</td>
+                         {{-- <td>{{Helper::money_format($value->total_amount) ?: "N/A"}}</td> --}}
                       </tr>
                     @empty
                       <tr>

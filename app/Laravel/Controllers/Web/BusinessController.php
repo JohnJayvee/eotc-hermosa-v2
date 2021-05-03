@@ -68,7 +68,7 @@ class BusinessController extends Controller
             $new_business->isNew = 1;
             $new_business->business_scope = $request->get('business_scope');
             $new_business->business_type = $request->get('business_type');
-            $new_business->dominant_name = $request->get('dominant_name');
+            // $new_business->dominant_name = $request->get('dominant_name');
             $new_business->business_name = $request->get('business_name');
             $new_business->tradename = $request->trade_name;
             $new_business->business_id_no = $request->get('business_id_no');

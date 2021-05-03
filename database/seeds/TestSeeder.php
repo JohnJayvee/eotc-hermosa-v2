@@ -1,5 +1,9 @@
 <?php
 
+use App\Laravel\Models\ApplicationBusinessPermit;
+use App\Laravel\Models\Assessment;
+use App\Laravel\Models\Business;
+use App\Laravel\Models\BusinessTransaction;
 use App\Laravel\Models\Customer;
 use App\Laravel\Models\CustomerFile;
 use Illuminate\Database\Seeder;
@@ -16,6 +20,10 @@ class TestSeeder extends Seeder
     {
         Customer::truncate();
         CustomerFile::truncate();
+        Business::truncate();
+        ApplicationBusinessPermit::truncate();
+        BusinessTransaction::truncate();
+        Assessment::truncate();
 
         File::deleteDirectory('public/uploads/customer');
 
@@ -24,6 +32,24 @@ class TestSeeder extends Seeder
             'fname' => 'Alice',
             'mname' => '',
             'lname' => 'Alpha',
+        ]);
+
+        $business = factory(Business::class)->create([
+            'customer_id' => $customer->id,
+        ]);
+
+        $permit = factory(ApplicationBusinessPermit::class)->create([
+            'customer_id' => $customer->id,
+            'business_id' => $business->id,
+        ]);
+
+        $transaction = factory(BusinessTransaction::class)->create([
+            'business_id' => $business->id,
+            'business_permit_id' => $permit->id,
+        ]);
+
+        $assessment = factory(Assessment::class)->create([
+            'transaction_id' => $transaction->id,
         ]);
     }
 }
