@@ -10,10 +10,10 @@ namespace App\Laravel\Controllers\System;
  * Models
  */
 
-use App\Laravel\Models\Business;
-use App\Laravel\Models\BusinessLine;
-use App\Laravel\Models\BusinessTransaction;
-use Carbon,Auth,DB,Str,Helper,Event;
+use App\Laravel\Models\{Business,BusinessLine,BusinessTransaction,ApplicationBusinessPermit,BusinessActivity};
+
+use Carbon,Auth,DB,Str,Event,PDF,QrCode,Helper,Curl,Log;
+
 use App\Laravel\Requests\PageRequest;
 /* App Classes
  */
@@ -121,4 +121,15 @@ class BusinessCVController extends Controller
 			return redirect()->back();
 		}
 	}
+
+    public function download (PageRequest $request , $id = NULL){
+
+        $this->data['business'] = Business::find($id);
+        $this->data['business_line'] = BusinessLine::where('business_id', $id)->get();
+
+        $pdf = PDF::loadView('pdf.business-cv',$this->data);
+
+        return $pdf->stream("business-cv.pdf");
+
+    }
 }

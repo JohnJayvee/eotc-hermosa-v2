@@ -43,7 +43,6 @@
         </div>
         <div class="col-md-12">
             <div class="shadow-sm fs-15 table-responsive ">
-                <button class="btn btn-primary btn-sm p-2" onclick="printDiv()">Print</button>
                 <table id="printableTable" class="table table-striped table-wrap" style="table-layout: fixed;">
                     <thead>
                         <tr>
@@ -56,16 +55,23 @@
                         @forelse($business as $business_cv)
                             <tr>
                                 @if ($business_cv->isNew == 1)
-                                    <td><a
-                                            href="{{ route('system.business_cv.show', ['id' => $business_cv->id]) }}">{{ $business_cv->business_name }}</a></a>
-                                        <span class="ml-2 badge badge-success">New</span></td>
+                                    <td>
+                                        <a href="{{ route('system.business_cv.show', ['id' => $business_cv->id]) }}">{{ $business_cv->business_name }}</a>
+                                        <span class="ml-2 badge badge-success">New</span>
+                                    </td>
                                 @else
-                                    <td><a
-                                            href="{{ route('system.business_cv.show', ['id' => $business_cv->id]) }}">{{ $business_cv->business_name }}</a>
+                                    <td>
+                                        <a href="{{ route('system.business_cv.show', ['id' => $business_cv->id]) }}">{{ $business_cv->business_name }}</a>
                                     </td>
                                 @endif
                                 <td>{{ $business_cv->owner->name }}</td>
-                                <td>{{ Helper::date_format($business_cv->created_at) }}</th>
+                                <td>{{ Helper::date_format($business_cv->created_at) }}</td>
+                                <td >
+                                  <button type="button" class="btn btn-sm p-0" data-toggle="dropdown" style="background-color: transparent;"> <i class="mdi mdi-dots-horizontal" style="font-size: 30px"></i></button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton2">
+                                    <a class="dropdown-item" href="{{route('system.business_cv.download',[$business_cv->id])}}">Print Business CV</a>
+                                  </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -74,13 +80,13 @@
                         @endforelse
                     </tbody>
                 </table>
-<iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
-
             </div>
+            @if($business->total() > 0)
             <nav class="mt-2">
-                {!! $business->render() !!}
-                </ul>
+                <p>Showing <strong>{{$business->firstItem()}}</strong> to <strong>{{$business->lastItem()}}</strong> of <strong>{{$business->total()}}</strong> entries</p>
+                {!!$business->appends(request()->query())->render()!!}
             </nav>
+            @endif
         </div>
     </div>
 @stop
@@ -118,34 +124,6 @@
     .btn-sm {
         border-radius: 10px;
     }
-
 </style>
 
-@stop
-
-@section('page-scripts')
-<script src="{{ asset('system/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript">
-    $(function() {
-
-        $(".action-delete").on("click", function() {
-            var btn = $(this);
-            $("#btn-confirm-delete").attr({
-                "href": btn.data('url')
-            });
-        });
-
-    })
-
-</script>
-
-
-<script type="text/javascript">
-    function printDiv() {
-        window.frames["print_frame"].document.body.innerHTML = document.getElementById("printableTable").innerHTML;
-        window.frames["print_frame"].window.focus();
-        window.frames["print_frame"].window.print();
-    }
-
-</script>
 @stop

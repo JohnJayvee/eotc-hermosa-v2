@@ -36,7 +36,7 @@
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom: solid 1px #fff;">
 	<tbody class="fs14 border">
-		<tr>
+		<tr>	
 			<td width="20%" class="text-center" rowspan="3" style="padding: 2px;"><img src="{{ public_path('web/img/hermosa-seal.png') }}" width="60%"></td>
 			<td width="60%" class="text-center">APPLICATION FORM FOR BUSINESS PERMIT</td>
 		</tr>

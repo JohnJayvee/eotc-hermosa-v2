@@ -126,7 +126,7 @@
                 </div>
             </div>
             <h5 class="text-title text-uppercase mt-4">OTHER INFORMATION FORM (GOVERNMENT OWNED OR CONTROLLED CORPORATIONS)</h5>
-             <div class="row underline mb-2">
+            <div class="row underline mb-2">
                 <div class="col-md-6">
                     <label class="text-uppercase">{{$profile->sss_no ?: "-"}}</label>
                     <p>SSS Number</p>

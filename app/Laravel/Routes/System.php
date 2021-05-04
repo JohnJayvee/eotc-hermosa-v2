@@ -64,7 +64,7 @@ Route::group(['as' => "auth."], function(){
 			Route::get('release/{id?}',['as' => "release",'uses' => "BusinessTransactionController@release",'middleware' => "system.exist:business_transaction"]);
 			Route::get('read-all-notifs',['as' => "read_all_notifs",'uses' => "BusinessTransactionController@read_all_notifs"]);
 			Route::get('bulk-decline',['as' => "bulk_decline",'uses' => "BusinessTransactionController@bulk_decline"]);
-
+			Route::get('download/{id?}',['as' => "download",'uses' => "BusinessTransactionController@download"]);
 		});
 
 
@@ -197,6 +197,7 @@ Route::group(['as' => "auth."], function(){
             Route::get('edit/{id?}',['as' => "edit",'uses' => "BusinessCVController@edit"]);
 			Route::post('edit/{id?}',['uses' => "BusinessCVController@update"]);
 			Route::any('delete/{id?}',['as' => "destroy",'uses' => "BusinessCVController@destroy"]);
+			Route::any('download/{id?}',['as' => "download",'uses' => "BusinessCVController@download"]);
 		});
 	});
 

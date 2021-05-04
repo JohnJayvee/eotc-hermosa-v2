@@ -777,5 +777,17 @@ class BusinessTransactionController extends Controller
         }
     }
 
-  
+  	public function download (PageRequest $request , $id = NULL){
+
+        $transaction = BusinessTransaction::find($id);
+        $this->data['business'] = Business::find($transaction->business_id);
+        $this->data['application'] = ApplicationBusinessPermit::find($transaction->business_permit_id);
+        $this->data['activities'] = BusinessActivity::where('application_business_permit_id', $this->data['application']->id)->get();
+
+        $customPaper = array(0,0,700.00,1200);
+        $pdf = PDF::loadView('pdf.permit-application',$this->data)->setPaper($customPaper);
+
+        return $pdf->download("permit-application.pdf");
+
+    }
 }
