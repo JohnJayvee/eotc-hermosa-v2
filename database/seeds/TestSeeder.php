@@ -91,7 +91,7 @@ class TestSeeder extends Seeder
             'department_remarks' => $departmentRemarks,
         ]);
 
-        $assessment = factory(Assessment::class)->create([
+        $assessment = factory(Assessment::class, 3)->create([
             'transaction_id' => $transaction->id,
         ]);
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFeeColumnsToAssessmentTable extends Migration
+class RemoveClearanceFeeToAssessmentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class AddFeeColumnsToAssessmentTable extends Migration
     public function up()
     {
         Schema::table('assessment', function (Blueprint $table) {
-            $table->string('total_assessment')->nullable();
-            $table->string('clearance_fee')->nullable();
+            $table->dropColumn(['clearance_fee']);
         });
     }
 
@@ -27,7 +26,7 @@ class AddFeeColumnsToAssessmentTable extends Migration
     public function down()
     {
         Schema::table('assessment', function (Blueprint $table) {
-            $table->dropColumn(['total_assessment', 'clearance_fee']);
+            $table->string('clearance_fee')->nullable();
         });
     }
 }

@@ -29,10 +29,9 @@
                       <th class="text-title p-3">Department Name</th>
                       <th class="text-title p-3">Assessment File</th>
                       <th class="text-title p-3">Cedula</th>
-                      <th class="text-title p-3">Barangay Fee</th>
+                      <th class="text-title p-3">Barangay Clearance Fee</th>
                       <th class="text-title p-3">Total Assessment</th>
                       <th class="text-title p-3">FSI Fee</th>
-                      <th class="text-title p-3">Clearance Fee</th>
                       {{-- <th class="text-title p-3">Total Amount</th> --}}
                     </tr>
                   </thead>
@@ -45,8 +44,6 @@
                          <td>{{Helper::money_format($value->brgy_fee) ?: "N/A"}}</td>
                          <td>{{Helper::money_format($value->total_assessment) ?: "N/A"}}</td>
                          <td>{{Helper::money_format($value->bfp_fee) ?: "N/A"}}</td>
-                         <td>{{Helper::money_format($value->clearance_fee) ?: "N/A"}}</td>
-                         {{-- <td>{{Helper::money_format($value->total_amount) ?: "N/A"}}</td> --}}
                       </tr>
                     @empty
                       <tr>
