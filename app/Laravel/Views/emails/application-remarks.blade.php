@@ -68,8 +68,12 @@
 				<th style="text-align: right;">{{Str::title($department_name)}}</th>
 			</tr>
 			<tr class="text-blue">
+				<th style="text-align: left;padding: 10px;">Status:</th>
+				<th style="text-align: right;">{{Str::title($status)}}</th>
+			</tr>
+			<tr class="text-blue">
 				<th style="text-align: left;padding: 10px;">Remarks:</th>
-				<th style="text-align: right;">{{Str::title($remarks)}}</th>
+				<th style="text-align: right;">{{ $remarks ? Str::title($remarks) : 'N/A'}}</th>
 			</tr>
 			<tr class="text-blue">
 				<th style="text-align: left;padding: 10px;">Date:</th>

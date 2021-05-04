@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Laravel\Events;
 
 use Illuminate\Queue\SerializesModels;
@@ -19,19 +19,20 @@ class SendEmailRemarks extends Event {
 		$this->data = $form_data;
 		// $this->email = $form_data['insert'];
 
-	
+
 
 	}
 
-	public function job(){	
-		
-		
+	public function job(){
+
+
 		foreach($this->data as $index =>$value){
 			$mailname = "Application Remarks Details";
 			$user_email = $value['email'];
 			$this->data['full_name'] = $value['full_name'];
 			$this->data['application_name'] = $value['application_name'];
 			$this->data['department_name'] = $value['department_name'];
+            $this->data['status'] = $value['status'];
 			$this->data['remarks'] = $value['remarks'];
 			$this->data['created_at'] = $value['created_at'];
 
@@ -43,8 +44,8 @@ class SendEmailRemarks extends Event {
 		}
 
 
-		
-		
-		
+
+
+
 	}
 }
