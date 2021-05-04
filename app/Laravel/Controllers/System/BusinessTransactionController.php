@@ -546,7 +546,7 @@ class BusinessTransactionController extends Controller
 				$dept_array = [];
 
 				foreach ($department_id as $data) {
-					array_push($dept_array, $data->code);
+					array_push($dept_array, $data->id);
 				}
 				$transaction->department_involved = json_encode($dept_array);
 
