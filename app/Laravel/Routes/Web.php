@@ -37,6 +37,34 @@ Route::group(['as' => 'web.',
             Route::post('/otp-submit', ['as' => 'otp_submit', 'uses' => 'AuthController@otp_submit']);
         });
 
+	Route::group(['prefix'=> "/",'as' => 'main.' ],function(){
+        Route::get('/', [ 'as' => "index",'uses' => "AuthController@login"]);
+    });
+	Route::get('coming-soon',['as' => "coming_soon",'uses' => "MainController@soon"]);
+	Route::get('type',['as' => "get_application_type",'uses' => "MainController@get_application_type"]);
+	Route::get('amount',['as' => "get_payment_fee",'uses' => "MainController@get_payment_fee"]);
+	Route::get('collection',['as' => "get_collection_fee",'uses' => "MainController@get_collection_fee"]);
+	Route::get('requirements',['as' => "get_requirements",'uses' => "MainController@get_requirements"]);
+	Route::get('requirements_two',['as' => "get_requirements_two",'uses' => "MainController@get_requirements_two"]);
+	Route::get('contact-us',['as' => "contact",'uses' => "MainController@contact"]);
+	Route::any('logout',['as' => "logout",'uses' => "AuthController@destroy"]);
+
+	Route::group(['middleware' => ["web","portal.guest"]], function(){
+		Route::get('activate',['as' => "activate",'uses' => "AuthController@activate"]);
+		Route::get('login/{redirect_uri?}',['as' => "login",'uses' => "AuthController@login"]);
+        Route::post('login/{redirect_uri?}',['uses' => "AuthController@authenticate"]);
+		Route::get('verify/{id?}',['as' => "verify",'uses' => "AuthController@verify"]);
+        Route::post('verify/{id?}',['uses' => "AuthController@verified"]);
+
+    /*  Route::get('forgot-password',['as' => "forgot_password",'uses' => "AuthController@forgot_pass"]);
+        Route::post('change-password',['as' => "change_password",'uses' => "AuthController@change_password"]);*/
+		Route::group(['prefix'=> "register",'as' => 'register.' ],function(){
+            Route::get('/', [ 'as' => "index",'uses' => "AuthController@register"]);
+            Route::post('/', [ 'uses' => "AuthController@store"]);
+
+            Route::get('/otp', [ 'as' => "otp", 'uses' => "AuthController@otpform"]);
+            Route::post('/otp', [ 'as' => "otp", 'uses' => "AuthController@sendOTP"]);
+            Route::post('/otp-submit', [ 'as' => "otp_submit", 'uses' => "AuthController@otp_submit"]);
         Route::group(['prefix' => 'password', 'as' => 'password.'], function () {
             Route::get('email', ['as' => 'sendEmail', 'uses' => 'AuthController@reset_mail_form']);
             Route::post('reset-link', ['uses' => 'AuthController@reset_email']);
