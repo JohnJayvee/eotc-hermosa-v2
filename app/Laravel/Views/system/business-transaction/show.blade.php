@@ -220,14 +220,21 @@
                   <tr>
                     <th class="text-title p-3">Department ID</th>
                     <th class="text-title p-3">Department Name</th>
+                    <th class="text-title p-3">Status</th>
+                    <th class="text-title p-3">Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
                   @if($transaction->department_involved)
                     @foreach(json_decode($transaction->department_involved) as $value)
+                      @php
+                        $remark = collect(json_decode($transaction->department_remarks))->where('id', $value)->first();
+                      @endphp
                     <tr>
                       <td>{{str::title($value)}}</td>
                       <td>{{str::title(Helper::department_name($value))}}</td>
+                      <td>{{ $remark ? collect($remark)->get('status') : '' }}</td>
+                      <td>{{ $remark ? collect($remark)->get('remarks') : '' }}</td>
                     </tr>
                     @endforeach
                   @else
@@ -285,58 +292,37 @@
         </div>
       </div>
     </div>
-    <div class="card card-rounded shadow-sm mb-2">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-6 pt-2">
-            <h5 class="text-title text-uppercase">Department Remarks</h5>
-          </div>
-          <div class="col-md-6">
-            @if(Auth::user()->type == "processor" and $transaction->department_involved)
-              @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
-                <a data-url="{{route('system.business_transaction.remarks',[$transaction->id])}}"  class="btn btn-primary btn-remarks border-5 text-white float-right">Add Remarks</a>
-              @endif
-            @endif
-          </div>
-          <div class="table-responsive pt-2">
-            <table class="table table-bordered table-wrap" style="table-layout: fixed;">
-              <thead>
-                <tr>
-                  <th class="text-title p-3">Processor Name</th>
-                  <th class="text-title p-3">Department Name</th>
-                  <th class="text-title p-3">Remarks</th>
-                </tr>
-              </thead>
-              <tbody>
-                @if($transaction->department_remarks)
-                  @foreach(json_decode($transaction->department_remarks) as $value)
-                  <tr>
-                    <td>{{str::title(Helper::processor_name($value->processor_id))}}</td>
-                    <td>{{str::title(Helper::department_name($value->id))}}</td>
-                    <td>{{str::title($value->remarks)}}</td>
-                  </tr>
-                  @endforeach
-                @else
-                  <tr class="text-center">
-                    <td colspan="3">No Remarks Records Available</td>
-                  </tr>
-                @endif
 
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
     @if(in_array(Auth::user()->type, ['admin', 'super_user']) and in_array($transaction->status, ['PENDING', 'ONGOING']))
       @if($transaction->is_validated == 0)
         <a data-url="{{route('system.business_transaction.validate',[$transaction->id])}}?status_type=validate&"  class="btn btn-primary mt-4 btn-validate border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}"><i class="fa fa-check-circle"></i> Validate Transactions</a>
         <a data-url="{{route('system.business_transaction.validate',[$transaction->id])}}?status_type=declined&"  class="btn btn-danger mt-4 btn-decline-bplo border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}"><i class="fa fa-times-circle"></i> Decline Transactions</a>
       @endif
       @if($transaction->for_bplo_approval == 1)
-        <a data-url="{{route('system.business_transaction.process',[$transaction->id])}}?status_type=approved&collection_id={{$transaction->collection_id}}"  class="btn btn-primary mt-4 btn-approved border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}"><i class="fa fa-check-circle"></i> Approve Transactions</a>
-        <a  data-url="{{route('system.business_transaction.process',[$transaction->id])}}?status_type=declined" class="btn btn-danger mt-4 btn-decline border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}""><i class="fa fa-times-circle"></i> Decline Transactions</a>
+        <a data-url="{{route('system.business_transaction.process',[$transaction->id])}}?status_type=approved&collection_id={{$transaction->collection_id}}"
+            class="btn btn-primary mt-4 btn-approved border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}">
+            <i class="fa fa-check-circle"></i> Approve Transactions
+        </a>
+        <a  data-url="{{route('system.business_transaction.process',[$transaction->id])}}?status_type=declined"
+            class="btn btn-danger mt-4 btn-decline border-5 text-white {{$transaction->status == 'approved' ? "isDisabled" : ""}}">
+            <i class="fa fa-times-circle"></i> Decline Transactions
+        </a>
       @endif
+    @endif
+
+    @if(Auth::user()->type == "processor" and $transaction->department_involved)
+        @if(in_array(Auth::user()->department->code, json_decode($transaction->department_involved)))
+            <a data-url="{{route('system.business_transaction.remarks',[$transaction->id])}}"
+                class="btn btn-primary btn-approve-remarks border-5 text-white mt-4"
+                >
+                <i class="fa fa-check-circle"></i>&emsp;Approve Transaction
+            </a>
+            <a data-url="{{route('system.business_transaction.remarks',[$transaction->id])}}"
+                class="btn btn-danger btn-decline-remarks border-5 text-white mt-4"
+                >
+                <i class="fa fa-times-circle"></i>&emsp;Decline Transaction
+            </a>
+        @endif
     @endif
   </div>
 
@@ -434,28 +420,46 @@
         }
       });
     });
-    $(".btn-remarks").on('click', function(){
+
+    $(".btn-approve-remarks").on('click', function(){
       var url = $(this).data('url');
       var self = $(this)
       Swal.fire({
-        title: "If you're one of the involved offices for this specific application, please place your remarks here.",
+        title: "Are you sure to approve?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Approve',
+        cancelButtonColor: '#d33',
+        inputValue: 'Approved',
+      }).then((result) => {
+        if (result.value) {
+          window.location.href = url + "?status=Approved";
+        }
+      });
+    });
+
+    $(".btn-decline-remarks").on('click', function(){
+      var url = $(this).data('url');
+      var self = $(this)
+      Swal.fire({
+        title: "Please put your remarks below.",
         icon: 'warning',
         input: 'textarea',
         inputPlaceholder: "Put remarks",
         showCancelButton: true,
-        confirmButtonText: 'Add Remarks',
+        confirmButtonText: 'Decline',
         cancelButtonColor: '#d33',
-        inputValue: 'Approved',
       }).then((result) => {
         if (result.value === "") {
           alert("You need to write something")
           return false
         }
         if (result.value) {
-          window.location.href = url + "?value="+result.value;
+          window.location.href = url + "?status=Declined&value="+result.value;
         }
       });
     });
+
     $(".btn-approved").on('click', function(){
       var url = $(this).data('url');
       var btn = $(this)
