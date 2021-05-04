@@ -20,5 +20,6 @@ $factory->define(BusinessTransaction::class, function (Faker $faker) {
         'is_validated' => 1,
         'department_involved' => json_encode(Department::pluck('code')->all()),
         'for_bplo_approval' => 1,
+        'application_name' => $faker->catchPhrase,
     ];
 });
