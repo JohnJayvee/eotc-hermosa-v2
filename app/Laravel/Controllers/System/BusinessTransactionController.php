@@ -514,6 +514,7 @@ class BusinessTransactionController extends Controller
                 'full_name' => $transaction->owner->full_name,
                 'department_name' => $auth->department->name,
                 'application_name' => $transaction->application_name,
+                'status' => $status,
                 'remarks' => $value,
                 'created_at' => Carbon::now(),
             ];
