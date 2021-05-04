@@ -271,9 +271,9 @@
                   <th class="text-title p-3">Department Name</th>
                   <th class="text-title p-3">Assessment File</th>
                   <th class="text-title p-3">Cedula</th>
-                  <th class="text-title p-3">Barangay Fee</th>
-                  <th class="text-title p-3">BFP Fee</th>
-                  <th class="text-title p-3">Total Amount</th>
+                  <th class="text-title p-3">Barangay Clearance Fee</th>
+                  <th class="text-title p-3">Total Assessment</th>
+                  <th class="text-title p-3">FSI Fee</th>
                 </tr>
               </thead>
               <tbody>
@@ -283,13 +283,17 @@
                      <td><a href="{{$value->directory}}/{{$value->filename}}" target="_blank">{{$value->original_name}}</a></td>
                      <td>{{Helper::money_format($value->cedula)}}</td>
                      <td>{{Helper::money_format($value->brgy_fee)}}</td>
+                     <td>{{Helper::money_format($value->total_assessment)}}</td>
                      <td>{{Helper::money_format($value->bfp_fee)}}</td>
-                     <td>{{Helper::money_format($value->total_amount)}}</td>
                   </tr>
                 @empty
                 @endforelse
               </tbody>
             </table>
+
+            @if($assessments)
+              <p class="text-title float-right p-3 fw-600 mb-0">Total Amount: {{Helper::money_format($total_amount)}}</p>
+            @endif
           </div>
         </div>
       </div>
