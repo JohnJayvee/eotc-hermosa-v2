@@ -30,7 +30,7 @@ use App\Laravel\Events\UploadLineOfBusinessToLocal;
 use App\Laravel\Requests\System\TransactionCollectionRequest;
 use App\Laravel\Requests\System\TransactionUpdateRequest;
 use App\Laravel\Requests\System\AssessmentRequest;
-
+use App\Laravel\Requests\System\RemarkBusinessTransactionRequest;
 use Carbon,Auth,DB,Str,ImageUploader,Helper,Event,FileUploader,Curl,PDF;
 use Illuminate\Support\Facades\Log;
 
@@ -101,7 +101,8 @@ class BusinessTransactionController extends Controller
         $this->data['applications'] = ['' => "Choose Applications"] + Application::where('department_id',$request->get('department_id'))->where('type',"business")->pluck('name', 'id')->toArray();
 
         $this->data['department'] = Department::find($this->data['selected_department']);
-		$this->data['transactions'] = BusinessTransaction::with('application_permit')->with('owner')->where('status',"PENDING")->where('is_resent',0)->whereHas('application_permit',function($query){
+
+        $query = BusinessTransaction::with('application_permit')->with('owner')->where('status',"PENDING")->where('is_resent',0)->whereHas('application_permit',function($query){
 				if(strlen($this->data['keyword']) > 0){
 					return $query->WhereRaw("LOWER(business_name)  LIKE  '%{$this->data['keyword']}%'")
 								->orWhereRaw("LOWER(application_no) LIKE  '%{$this->data['keyword']}%'");
@@ -143,9 +144,13 @@ class BusinessTransactionController extends Controller
 						return $query->where('is_validated', '1');
 					}
 				})
-				->where(DB::raw("DATE(created_at)"),'>=',$this->data['start_date'])
-				->where(DB::raw("DATE(created_at)"),'<=',$this->data['end_date'])
-				->orderBy('created_at',"ASC")->paginate($this->per_page);
+                ->whereBetween('created_at', [
+                    Carbon::parse($this->data['start_date'])->startOfDay()->format('Y-m-d H:i:s'),
+                    Carbon::parse($this->data['end_date'])->endofDay()->format('Y-m-d H:i:s')
+                ])
+				->orderBy('created_at',"ASC");
+
+        $this->data['transactions'] = $query->paginate($this->per_page);
 
 		return view('system.business-transaction.pending',$this->data);
 	}
@@ -334,7 +339,7 @@ class BusinessTransactionController extends Controller
 	            ];
 	            BusinessActivity::insert($data);
         	}
-            
+
             DB::commit();
 
             session()->flash('notification-status', "success");
@@ -378,7 +383,7 @@ class BusinessTransactionController extends Controller
     }
 
 	public function process($id = NULL,PageRequest $request){
-		
+
 		$type = strtoupper($request->get('status_type'));
 		DB::beginTransaction();
 		try{
@@ -395,7 +400,7 @@ class BusinessTransactionController extends Controller
             $transaction->application_permit->save();
 
 			if ($type == "APPROVED") {
-				
+
 			    $insert[] = [
 	            	'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
 	            	'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
@@ -410,7 +415,7 @@ class BusinessTransactionController extends Controller
 			    Event::dispatch('send-email-business-approved', $notification_data_email);
 
 			} else {
-           
+
                 $insert[] = [
                     'contact_number' => $transaction->owner ? $transaction->owner->contact_number : $transaction->contact_number,
                     'email' => $transaction->owner ? $transaction->owner->email : $transaction->email,
@@ -451,17 +456,18 @@ class BusinessTransactionController extends Controller
         Event::dispatch('send-digital-business-permit', $notification_data_email);
     }
 
-	public function remarks($id = NULL,PageRequest $request){
+	public function remarks($id = NULL, RemarkBusinessTransactionRequest $request){
 		DB::beginTransaction();
 			$transaction = $request->get('business_transaction_data');
+
 			$auth = Auth::user();
 			$array_remarks = [];
 			$dept_id = [];
 	 		$value = $request->get('value');
-
+            $status = $request->get('status');
 
 	 		if ($transaction->department_remarks) {
-	 			array_push($array_remarks, ['processor_id' => $auth->id ,'id' => $auth->department->code , 'remarks' => $value]);
+	 			array_push($array_remarks, ['processor_id' => $auth->id ,'id' => $auth->department->code , 'remarks' => $value, 'status' => $status]);
 	 			$existing = json_decode($transaction->department_remarks);
 	 			$existing_id = json_decode($transaction->department_id);
 
@@ -481,7 +487,7 @@ class BusinessTransactionController extends Controller
 
 	 			$final_value = array_merge($existing , $array_remarks);
 	 		}else{
-	 			 array_push($array_remarks, ['processor_id' => $auth->id,'id' => $auth->department->code , 'remarks' => $value]);
+	 			 array_push($array_remarks, ['processor_id' => $auth->id,'id' => $auth->department->code , 'remarks' => $value, 'status' => $status]);
 
 	 			 array_push($dept_id, $auth->department->code);
 
@@ -557,7 +563,7 @@ class BusinessTransactionController extends Controller
 					session()->flash('notification-msg', "No Processor Found.");
 					return redirect()->route('system.business_transaction.show',[$id]);
 				}
-				
+
 				$insert = [];
 				foreach ($department as $departments ) {
 					$insert[] = [
@@ -635,7 +641,7 @@ class BusinessTransactionController extends Controller
 			$auth = Auth::user();
 			$this->data['transaction'] = BusinessTransaction::find($id);
 
-			
+
 			$new_assessment = new Assessment();
 			$new_assessment->transaction_id = $id;
 			$new_assessment->department_id = Auth::user()->department_id;
@@ -648,12 +654,12 @@ class BusinessTransactionController extends Controller
 				$ext = $request->file('file')->getClientOriginalExtension();
 				$image = $request->file('file');
 
-				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){ 
+				if($ext == 'pdf' || $ext == 'docx' || $ext == 'doc' || $ext == 'xlsx'){
 					$type = 'file';
 					$original_filename = $request->file('file')->getClientOriginalName();
 					$upload_image = FileUploader::upload($image, 'uploads/transaction/assessment/'.$id);
 				}
-				if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){ 
+				if($ext == 'png' || $ext == 'jpg' || $ext == 'jpeg'){
 					$type = 'image';
 					$original_filename = $request->file('file')->getClientOriginalName();
 					$upload_image = ImageUploader::upload($image, 'uploads/transaction/assessment/'.$id);
@@ -790,4 +796,5 @@ class BusinessTransactionController extends Controller
         return $pdf->download("permit-application.pdf");
 
     }
+
 }
