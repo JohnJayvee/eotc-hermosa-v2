@@ -52,9 +52,8 @@ class BusinessPaymentController extends Controller
         $brgy_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('brgy_fee');
         $totalAssessment = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('total_assessment');
         $bfp_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('bfp_fee');
-        $clearanceFee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('clearance_fee');
 
-        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $totalAssessment + $bfp_fee + $clearanceFee;
+        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $totalAssessment + $bfp_fee;
 
         return view('web.business.payment',$this->data);
     }

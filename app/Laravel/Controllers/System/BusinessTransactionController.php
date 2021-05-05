@@ -272,6 +272,13 @@ class BusinessTransactionController extends Controller
 		$this->data['department'] =  Department::pluck('name','id')->toArray();
 
 		$this->data['assessments'] = Assessment::where('transaction_id',$id)->get();
+
+        $cedula_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('cedula');
+        $brgy_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('brgy_fee');
+        $totalAssessment = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('total_assessment');
+        $bfp_fee = Assessment::where('transaction_id', $this->data['transaction']->id)->sum('bfp_fee');
+
+        $this->data['total_amount'] = $cedula_fee + $brgy_fee + $totalAssessment + $bfp_fee;
         $this->update_status($id);
 		$this->data['page_title'] = "Transaction Details";
 		return view('system.business-transaction.show',$this->data);
@@ -507,6 +514,7 @@ class BusinessTransactionController extends Controller
                 'full_name' => $transaction->owner->full_name,
                 'department_name' => $auth->department->name,
                 'application_name' => $transaction->application_name,
+                'status' => $status,
                 'remarks' => $value,
                 'created_at' => Carbon::now(),
             ];

@@ -14,7 +14,6 @@ $factory->define(Assessment::class, function (Faker $faker) {
         'brgy_fee' => $faker->randomDigitNotNull,
         'bfp_fee' => $faker->randomDigitNotNull,
         'total_assessment' => $faker->randomDigitNotNull,
-        'clearance_fee' => $faker->randomDigitNotNull,
         'department_id' => Department::inRandomOrder()->first()->id,
     ];
 })->afterCreating(Assessment::class, function (Assessment $assessment, Faker $faker) {
