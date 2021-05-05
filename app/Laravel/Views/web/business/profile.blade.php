@@ -58,15 +58,15 @@
                             </div>
                         </div>
                         <div class="row underline mb-2">
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <label class="text-uppercase">{{$profile->dominant_name}}</label>
                                 <p>Dominant Name</p>
-                            </div>
+                            </div> --}}
                              <div class="col-md-4">
                                 <label class="text-uppercase">{{$profile->business_name}}</label>
                                 <p>Business Name</p>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-8">
                                 <label class="text-uppercase"><a href="{{$profile->website_url}}">{{$profile->website_url}}</a></label>
                                 <p>Website (URL)</p>
                             </div>
@@ -157,7 +157,7 @@
                                 <label class="text-uppercase">{{$profile->rep_gender}}</label>
                                 <p>Gender</p>
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -169,7 +169,7 @@
                                 <p>TIN</p>
                             </div>
                         </div>
-                      
+
                         <h5 class="text-title text-uppercase mt-4">Line of Business</h5>
                         <div class="row underline mb-2">
                             @if($business_transaction)
@@ -264,7 +264,7 @@
                                 <p>Region</p>
                             </div>
                         </div>
-                      
+
                         <h5 class="text-title text-uppercase mt-4">Other Information Form (Government Owned Or Controlled Corporations)</h5>
                          <div class="row underline mb-2">
                             <div class="col-md-6">
