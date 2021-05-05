@@ -780,7 +780,6 @@ $.fn.get_region = function (input_region, input_province, input_city, input_brgy
     // return result;
 };
 
-
 $.fn.get_city = function (reg_code, input_city, input_brgy, selected) {
     $(input_brgy).empty().prop('disabled', true)
     $(input_city).append($('<option>', {
