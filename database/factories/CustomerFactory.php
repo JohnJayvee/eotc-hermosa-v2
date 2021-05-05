@@ -15,7 +15,7 @@ $factory->define(Customer::class, function (Faker $faker) {
         'mname' => $faker->lastName,
         'email' => $faker->unique()->safeEmail,
         'gender' => $faker->randomElement(['male', 'female']),
-        'contact_number' => $faker->bothify('+639#########'),
+        'contact_number' => $faker->bothify('+63956#######'),
         'region' => '030000000',
         'region_name' => 'REGION III (CENTRAL LUZON)',
         'town' => '030803000',
