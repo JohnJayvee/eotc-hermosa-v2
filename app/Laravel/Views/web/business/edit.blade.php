@@ -35,21 +35,19 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                {{-- <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Dominant Name</label>
                                         <h4 class="form-data text-success">{{ Str::upper($business->dominant_name) }}</h4>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Business Name</label>
                                         <h4 class="form-data text-success">{{ Str::upper($business->business_name) }}</h4>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-sm-12 col-md-6 col-lg-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="text-form pb-2">Trade name / Franchise</label>
                                         <input type="text" class="form-control form-control-sm {{ $errors->first('trade_name') ? 'is-invalid': NULL  }}"  name="trade_name" value="{{old('trade_name', $business->tradename ?? '') }}">
@@ -59,6 +57,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -91,8 +90,17 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1" class="text-form pb-2">Business TIN.</label>
-                                        <input type="number" class="form-control form-control-sm {{ $errors->first('business_tin') ? 'is-invalid': NULL  }}"  name="business_tin" value="{{old('business_tin', $business->business_tin ?? '') }}">
+                                        <label for="exampleInputEmail1" class="text-form pb-2">
+                                          Business TIN.
+                                          <input type="checkbox" id="has_business_tin" name="has_business_tin" value="1"
+                                          {{ (request()->old() ? old('has_business_tin') : ($business->business_tin ? true : false)) ? 'checked' : '' }}
+                                          class="form-check-input ml-2" />
+                                        </label>
+                                        <input type="number"
+                                          class="form-control form-control-sm {{ $errors->first('business_tin') ? 'is-invalid': NULL  }}"
+                                          id="business_tin"  name="business_tin"
+                                          value="{{ request()->old() ? old('business_tin') : $business->business_tin }}"
+                                          >
                                         @if($errors->first('business_tin'))
                                             <small class="form-text pl-1" style="color:red;">{{$errors->first('business_tin')}}</small>
                                         @endif
@@ -720,7 +728,7 @@
 <style type="text/css">
     #map {
         height: 400px !important;
-        width: 100% !important; 
+        width: 100% !important;
     }
 </style>
 @endsection
@@ -831,9 +839,9 @@
     $( "#edit_form" ).submit(function( event ) {
         $("#input_lessor_region").prop( "disabled", false );
         $("#input_lessor_town").prop( "disabled", false );
-    });   
+    });
     $(function () {
-        
+
         $('#buttonID').click(function(){
             alert('click');
         })
@@ -848,7 +856,7 @@
         $('#postcode').text( $("#map-address").val())
 
         function updateControls(addressComponents) {
-            $('#postcode').val(addressComponents.postalCode);       
+            $('#postcode').val(addressComponents.postalCode);
         }
 
         $('#map').locationpicker({
@@ -901,7 +909,7 @@
             $('#input_lessor_zipcode').val('');
             $('#input_lessor_town_name').val(_text);
         }
-      
+
         function load_owner_barangay() {
             var _val = "030805000";
             var _text = "BATAAN - HERMOSA";
@@ -948,8 +956,17 @@
             $('#input_owner_brgy_name').val(_text);
         });
 
+        $('#has_business_tin').on('change', function(){
+            if(!this.checked){
+                $('#business_tin').val('');
+            }
+
+            $('#business_tin').attr('disabled', !this.checked);
+        });
+
+        $('#business_tin').prop('disabled', !$('#has_business_tin').is(':checked'));
     })
 
-  
+
 </script>
 @endsection
