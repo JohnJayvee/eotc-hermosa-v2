@@ -12,7 +12,8 @@ class EditBusinessRequest extends RequestManager{
             "dti_sec_cda_registration_no" => "required",
             "dti_sec_cda_registration_date" => "required",
             "ctc_no" => "required",
-            "business_tin" => "required",
+            'has_business_tin' => ['nullable', 'in:1'],
+            "business_tin" => "required_if:has_business_tin,1",
             "business_area" => "required",
             "no_male_employee" => "required|integer",
             "no_female_employee" =>"required|integer",
@@ -35,6 +36,7 @@ class EditBusinessRequest extends RequestManager{
 		return [
 			'required'	=> "Field is required.",
             'integer' => "Invalid Data.",
+            'business_tin.required_if' => 'The Business TIn field is required.'
 		];
 
 	}
