@@ -52,9 +52,9 @@ class RedirectIfAuthenticated
             return redirect()->route('web.main.index');
         }
 
-        if ($request->routeIs('web.main.index') && ! Auth::guard('customer')->check()) {
+        /* if ($request->routeIs('web.main.index') && ! Auth::guard('customer')->check()) {
             return redirect()->route('web.login');
-        }
+        } */
 
         return $next($request);
     }

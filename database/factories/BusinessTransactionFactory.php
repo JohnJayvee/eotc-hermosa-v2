@@ -21,5 +21,10 @@ $factory->define(BusinessTransaction::class, function (Faker $faker) {
         'department_involved' => json_encode(Department::pluck('code')->all()),
         'for_bplo_approval' => 1,
         'application_name' => $faker->catchPhrase,
+
     ];
+})->afterCreating(BusinessTransaction::class, function (BusinessTransaction $transaction, Faker $faker) {
+    $transaction->update([
+        'business_name' => $transaction->business_info->business_name,
+    ]);
 });
